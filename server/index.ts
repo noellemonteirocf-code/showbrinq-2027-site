@@ -28,6 +28,20 @@ const listenTarget: number | string = /^\d+$/.test(rawPort) ? Number(rawPort) : 
 const indexingEnabled = process.env.SITE_INDEXING !== 'off';
 const publicRobots = indexingEnabled ? 'index, follow' : 'noindex, nofollow';
 app.disable('x-powered-by');
+// One official address: www.showbrinq.com.br → showbrinq.com.br (301), so search engines see a single site.
+const canonicalHost = (() => { try { return new URL(publishedOrigin).host; } catch { return ''; } })();
+app.use((req,res,next)=>{
+  const host = (req.headers.host || '').toLowerCase();
+  if(!development && canonicalHost && host === `www.${canonicalHost}`) { res.redirect(301, `${publishedOrigin}${req.originalUrl}`); return; }
+  next();
+});
+// Addresses from the previous site (index.html, index.php, sobre.php…) go to the matching page or the home (301).
+const legacyTargets: Record<string,string> = { index:'/', home:'/', inicio:'/', sobre:'/sobre', 'quem-somos':'/sobre', contato:'/contato', contatos:'/contato', blog:'/blog', expositores:'/expositores', lojistas:'/lojistas', credenciamento:'/credenciamento', hoteis:'/hoteis-parceiros', privacidade:'/privacidade', termos:'/termos' };
+app.get(/^\/(index|home|inicio)\/?$|^\/[a-z0-9-]+\.(php|html?|asp)$/i, (req,res)=>{
+  const name = req.path.replace(/^\//,'').replace(/\/$/,'').replace(/\.(php|html?|asp)$/i,'').toLowerCase();
+  const query = req.originalUrl.includes('?') ? req.originalUrl.slice(req.originalUrl.indexOf('?')) : '';
+  res.redirect(301, `${legacyTargets[name] ?? '/'}${query}`);
+});
 app.use(cookieParser());
 app.use((req,res,next)=>{if(req.path.includes('.local-platform')){res.sendStatus(404);return;}next();});
 app.use((_req, res, next) => {
