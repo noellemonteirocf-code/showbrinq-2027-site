@@ -1,0 +1,26 @@
+/* Navegação guiada por intenção, sem substituir o design system Showbrinq. */
+.desktop-nav .nav-more { position: relative; font-size: inherit; }
+.desktop-nav .nav-more > summary { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; list-style: none; padding: 9px 0; color: inherit; font-weight: 700; white-space: nowrap; }
+.desktop-nav .nav-more > summary::-webkit-details-marker { display: none; }
+.desktop-nav .nav-more[open] > summary, .desktop-nav .nav-more > summary:hover { color: var(--pink); }
+.nav-more-panel { position: absolute; z-index: 90; top: calc(100% + 13px); right: -20px; width: min(330px, 90vw); background: #fffdf8; border: 1px solid #e6e9e4; border-radius: 18px; padding: 10px; box-shadow: 0 18px 48px #12324626; display: grid; gap: 2px; }
+.nav-more-panel a { display: block; padding: 12px 14px; border-radius: 10px; color: #173646; font-size: 13px; line-height: 1.35; font-weight: 650; text-decoration: none; }
+.nav-more-panel a:hover, .nav-more-panel a:focus-visible { background: #e9f9fc; color: #c30058; }
+.mobile-more { border-bottom: 1px solid #e7ece5; }
+.mobile-more > summary { padding: 14px 0; display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-weight: 700; list-style: none; font-size: 14px; }
+.mobile-more > summary::-webkit-details-marker { display: none; }
+.mobile-more > div { background: #fffdf8; border-radius: 12px; padding: 4px 12px 8px; }
+.mobile-nav .mobile-more a { display: flex; align-items: center; justify-content: space-between; padding: 11px 3px; border-bottom: 1px solid #eef0ec; font-size: 13px; line-height: 1.35; }
+.mobile-nav .mobile-more a:last-child { border-bottom: 0; }
+.buyer-section-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-block: 14px; }
+.buyer-section-nav > span { font-size: 12px; font-weight: 800; color: #1b5363; margin-right: 4px; }
+.buyer-section-nav a { border: 1px solid #cbdde2; border-radius: 999px; padding: 8px 13px; background: #fffdf9; font-weight: 700; font-size: 12px; color: #194454; text-decoration: none; white-space: nowrap; transition: background .2s, border-color .2s; }
+.buyer-section-nav a:hover, .buyer-section-nav a:focus-visible { background: #e3f8fa; border-color: #52bfd1; }
+#beneficios-lojistas, #experiencia-lojistas, #cidades-lojistas, #planejar-lojistas { scroll-margin-top: 130px; }
+@media (max-width: 1100px) { .site-header .desktop-nav { gap: 10px; } .site-header .desktop-nav > a, .site-header .desktop-nav summary { font-size: 10px; } }
+@media (max-width: 850px) { .mobile-nav { max-height: calc(100dvh - 76px); overflow-y: auto; } .buyer-section-nav { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; padding-bottom: 14px; } .buyer-section-nav > span { flex: 0 0 auto; } .buyer-section-nav a { flex: 0 0 auto; } }
+@media (max-width: 600px) { .mobile-nav { max-height: calc(100dvh - 66px); } }
+@media (prefers-reduced-motion: reduce) { .buyer-section-nav a { transition: none; } }
+/* The shorter approved menu fits desktop from 1151px; keep tablet menu below. */
+@media(min-width:1151px){.site-header[data-brand-preview] .desktop-nav{display:flex;gap:14px}.site-header[data-brand-preview] .desktop-nav a,.site-header[data-brand-preview] .desktop-nav summary{font-size:12px}.site-header[data-brand-preview] .mobile-menu-toggle{display:none}}
+.nav-more>summary:focus-visible,.mobile-more>summary:focus-visible{outline:3px solid #165572;outline-offset:4px;border-radius:6px}

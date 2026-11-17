@@ -1,0 +1,62 @@
+/* Abas Lojistas e Fornecedores: a mesma linguagem da abertura aprovada.
+   Escopo explícito: nenhuma regra altera o hero ou as seções da homepage. */
+#conteudo :is(.sb-buyer,.sb-supplier){font-family:"DM Sans",sans-serif;color:#1e2a3a;--sb-action:#c9145a;--sb-cream:#fbf3e8}
+#conteudo :is(.sb-buyer,.sb-supplier) :is(h1,h2,h3){font-family:"Plus Jakarta Sans",sans-serif;letter-spacing:-.035em;font-weight:800;line-height:1.18;text-wrap:balance}
+#conteudo :is(.sb-buyer,.sb-supplier) :is(p,li){line-height:1.75}
+#conteudo :is(.sb-buyer,.sb-supplier) .section{padding-block:80px}
+#conteudo .sb-buyer .audience-hero,#conteudo .sb-supplier .sb-expo-hero{position:relative;isolation:isolate;background-color:#fbf3e8;background-image:radial-gradient(ellipse at 95% 12%,#fc307c1c,transparent 50%),radial-gradient(ellipse at 10% 95%,#ffc93c20,transparent 45%),radial-gradient(ellipse at 80% 85%,#00a0d019,transparent 45%);background-size:120% 120%,130% 130%,120% 120%;padding-block:30px 85px;overflow:hidden}
+#conteudo .sb-buyer .audience-hero-grid{gap:70px;align-items:center}
+#conteudo .sb-buyer .audience-hero h1{font-size:clamp(42px,4.4vw,66px)!important;line-height:1.12;max-width:16ch;letter-spacing:-.035em}
+#conteudo .sb-buyer .audience-hero h1 em{font-style:normal;color:#df1c65;text-decoration:none;background:none}
+#conteudo .sb-buyer .audience-hero-grid>div>p:not(.footnote){font-size:18px!important;color:#526071;max-width:56ch}
+#conteudo .sb-buyer .audience-hero .tag{background:white;color:#087b98;border:1px solid #e9ddcb;border-radius:24px;font-size:11px;letter-spacing:.1em;padding:11px 16px}
+#conteudo .sb-buyer .visitor-access-note{padding:17px 20px;background:#fffaf3;border-left:3px solid #00a0d0;border-radius:0 15px 15px 0;box-shadow:none}
+#conteudo .sb-buyer .audience-hero-image{position:relative;isolation:isolate;height:520px;margin:30px 20px 20px 30px;border:0;background:transparent;transform:none;overflow:visible;box-shadow:none}
+#conteudo .sb-buyer .audience-hero-image::before{content:'';position:absolute;inset:-20px -15px 15px -30px;border-radius:50% 43% 57% 40%;background:#d4f1f7;transform:rotate(-9deg);z-index:-1}
+#conteudo .sb-buyer .audience-hero-image>img{width:100%;height:100%;object-fit:cover;border:8px solid white;border-radius:47% 53% 44% 56% / 42% 39% 61% 58%;box-shadow:0 25px 40px #352b1920}
+#conteudo .sb-buyer .audience-hero-image figcaption{position:absolute;bottom:25px;left:12px;right:12px;width:auto;border-radius:14px;padding:12px 15px;background:#1e2a3ae6;color:white;font-size:10px;letter-spacing:.04em;text-align:center}
+#conteudo .sb-buyer .audience-hero-image .kit-sticker{position:absolute;z-index:3;width:100px;pointer-events:none}
+#conteudo .sb-buyer .buyer-hero-blocks{bottom:-12px;left:-35px;transform:rotate(-12deg)}
+#conteudo .sb-buyer .buyer-hero-star{right:-28px;top:24%;width:90px!important}
+#conteudo .sb-buyer .buyer-hero-squiggle{left:-30px;top:-20px;width:85px!important}
+#conteudo .sb-supplier .sb-expo-hero-art{margin-top:30px}
+#conteudo .sb-supplier .sb-expo-photo-frame{border-radius:45% 55% 43% 57% / 40% 42% 58% 60%;border-width:8px}
+#conteudo :is(.sb-buyer,.sb-supplier) :is(.btn,.sb-expo-button){border-radius:32px;min-height:50px;box-shadow:none;transition:transform .2s,box-shadow .2s}
+#conteudo .sb-buyer .btn-primary{background:#c9145a;color:white;border-color:#c9145a;box-shadow:0 10px 25px #fc307c20}
+#conteudo .sb-buyer .btn-outline{background:white;border-color:#e7dbca;color:#1e2a3a}
+#conteudo :is(.sb-buyer,.sb-supplier) :is(.benefit-grid,.sb-expo-benefit-grid){gap:24px;margin-top:36px}
+#conteudo :is(.sb-buyer,.sb-supplier) :is(.benefit-card,.sb-expo-benefit-card){position:relative;background:#fbf3e8;border:1px solid #eee3d5;border-radius:25px;padding:32px;box-shadow:0 6px 0 #efe4d7;overflow:hidden}
+#conteudo :is(.sb-buyer,.sb-supplier) :is(.benefit-card,.sb-expo-benefit-card):nth-child(2){background:#edf9fc;border-color:#d9edf2;box-shadow:0 6px 0 #daedf2}
+#conteudo :is(.sb-buyer,.sb-supplier) :is(.benefit-card,.sb-expo-benefit-card):nth-child(3){background:#fff0f6;border-color:#f6dce7;box-shadow:0 6px 0 #f4dce6}
+#conteudo :is(.sb-buyer,.sb-supplier) :is(.benefit-card,.sb-expo-benefit-card) h3{font-size:25px;line-height:1.25;margin-top:23px}
+#conteudo :is(.sb-buyer,.sb-supplier) :is(.benefit-card,.sb-expo-benefit-card) p{font-size:16px;color:#526071}
+#conteudo .sb-buyer .steps-section{position:relative;isolation:isolate;background:#eaf8fc;overflow:hidden}
+#conteudo .sb-buyer .steps-section::before{content:'';position:absolute;inset:0;z-index:-1;background:url('/assets/brand-2027/stickers/fundo-azul-rabiscos.svg') repeat center / 1000px auto;opacity:.13;pointer-events:none}
+#conteudo .sb-buyer .steps-section .steps-grid>div{background:white;border:1px solid #d6eaf0;border-radius:22px;padding:25px;box-shadow:0 10px 30px #00516c09;display:block}
+#conteudo .sb-buyer .steps-section .steps-grid>div>span{display:inline-grid;place-items:center;width:42px;height:42px;border-radius:14px;background:#fff0f6;color:#c9145a;font-weight:800;margin-bottom:15px}
+#conteudo .sb-buyer #credenciamento-cidades{background:#fbf3e8}
+#conteudo :is(.sb-buyer,.sb-supplier) .circuit-section{background:#fffaf3}
+#conteudo :is(.sb-buyer,.sb-supplier) .circuit-explorer{border-radius:30px;box-shadow:0 20px 50px #30271c0c;overflow:hidden;border:1px solid #eee3d5}
+#conteudo :is(.sb-buyer,.sb-supplier) .experience-section{background:#fff}
+#conteudo :is(.sb-buyer,.sb-supplier) .hb-section{background:#fbf3e8}
+#conteudo .sb-supplier .sb-expo-formats{position:relative;isolation:isolate;background:#fff0f6;overflow:hidden}
+#conteudo .sb-supplier .sb-expo-format-card{background:white;border:1px solid #f0d3df;border-radius:24px;box-shadow:0 7px 0 #f7dfe9}
+#conteudo .sb-supplier .sb-expo-formats::before{content:'';position:absolute;right:-35px;top:20px;width:150px;height:150px;background:url('/assets/brand-2027/svg/02-estrela-contorno.svg') no-repeat center / contain;opacity:.2;z-index:-1;pointer-events:none}
+#conteudo :is(.sb-buyer,.sb-supplier) :is(.faq-section,.funnel-lead){background:#eef9fc}
+#conteudo :is(.sb-buyer,.sb-supplier) .faq-list details{background:white;border:1px solid #daeaf0;border-radius:17px;padding:0 20px;margin-bottom:12px}
+#conteudo :is(.sb-buyer,.sb-supplier) .faq-list summary{font-size:17px!important;padding:22px 0}
+#conteudo .sb-supplier .funnel-lead{position:relative;isolation:isolate;overflow:hidden}
+#conteudo .sb-supplier .funnel-lead::before{content:'';position:absolute;left:-80px;bottom:-60px;width:260px;height:260px;border-radius:50%;background:#ffc93c22;pointer-events:none;z-index:-1}
+#conteudo :is(.sb-buyer,.sb-supplier) :is(a,button,input,select,textarea):focus-visible{outline:3px solid #08748d;outline-offset:4px}
+html[data-motion=on] #conteudo :is(.sb-buyer .audience-hero,.sb-supplier .sb-expo-hero){animation:sb-color-drift 18s ease-in-out infinite alternate}
+html[data-motion=on] #conteudo .sb-buyer .steps-section::before{animation:sb-doodle-drift 25s ease-in-out infinite alternate}
+html[data-motion=on] #conteudo :is(.sb-buyer,.sb-supplier) .kit-sticker[data-visible=true]>img{animation:audience-toy-float 7s ease-in-out infinite alternate}
+html[data-motion=on] #conteudo :is(.sb-buyer,.sb-supplier) .kit-sticker:nth-of-type(even)>img{animation-delay:-3s;animation-duration:9s}
+@keyframes audience-toy-float{from{transform:translateY(0) rotate(-3deg)}to{transform:translateY(-12px) rotate(4deg)}}
+@media(hover:hover){#conteudo :is(.sb-buyer,.sb-supplier) :is(.btn,.sb-expo-button):hover{transform:translateY(-2px);box-shadow:0 10px 24px #30271c14}}
+@media(max-width:850px){#conteudo .sb-buyer .audience-hero-grid{grid-template-columns:1fr;gap:28px}#conteudo .sb-buyer .audience-hero-image{width:min(90%,520px);height:480px;margin-inline:auto}#conteudo .sb-supplier .sb-expo-hero-grid{gap:35px}}
+@media(max-width:600px){#conteudo :is(.sb-buyer,.sb-supplier) .section{padding-block:52px}#conteudo .sb-buyer .audience-hero,#conteudo .sb-supplier .sb-expo-hero{padding-bottom:55px}#conteudo .sb-buyer .audience-hero h1{font-size:40px!important;line-height:1.15}#conteudo .sb-buyer .audience-hero-image{height:360px;margin-top:25px}#conteudo .sb-buyer .audience-hero-image .kit-sticker{width:75px}#conteudo .sb-buyer .buyer-hero-star{width:70px!important;right:-15px}#conteudo .sb-buyer .buyer-hero-blocks{left:-16px}#conteudo .sb-buyer .hero-buttons{display:grid;gap:12px}#conteudo .sb-buyer .hero-buttons .btn{width:100%}#conteudo :is(.sb-buyer,.sb-supplier) :is(.benefit-card,.sb-expo-benefit-card){padding:25px}#conteudo :is(.sb-buyer,.sb-supplier) .circuit-explorer{border-radius:20px}}
+@media(prefers-reduced-motion:reduce){html[data-motion] #conteudo :is(.sb-buyer .audience-hero,.sb-supplier .sb-expo-hero),html[data-motion] #conteudo .sb-buyer .steps-section::before,html[data-motion] #conteudo :is(.sb-buyer,.sb-supplier) .kit-sticker>img{animation:none!important}#conteudo :is(.sb-buyer,.sb-supplier) :is(.btn,.sb-expo-button){transition:none}}
+
+@media(max-width:600px){#conteudo .sb-buyer .audience-hero h1{font-size:37px!important;max-width:18ch}#conteudo .sb-buyer .audience-hero h1 br{display:none}}
+#conteudo :is(.sb-buyer,.sb-supplier) .funnel-city-grid h3 small{display:inline-block;margin-left:7px;font-size:13px;letter-spacing:.03em;color:#637681}

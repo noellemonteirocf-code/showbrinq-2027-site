@@ -1,0 +1,61 @@
+/* Polimento de responsividade da jornada de lojistas (390 px).
+   Enquadramento da divisória, atalhos sempre visíveis, áreas de toque e legibilidade
+   de etiquetas. Sem alterar paleta, tipografia da marca, estrutura ou copy. */
+
+/* 1. Divisória ondulada: janela proporcional ao desenho, com folga para os objetos
+   das extremidades. A arte ocupa as linhas 202 a 522 de 724; a janela de 420
+   preserva cerca de 50 px de respiro acima e abaixo em qualquer largura. */
+#conteudo .sb-page.sb-buyer .buyer-hero-divider > img {
+  aspect-ratio: 2172 / 420;
+  height: auto;
+  margin: 0;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* 2. Atalhos "Ir direto para": em telas estreitas passam a quebrar em duas linhas,
+   de modo que as quatro opções fiquem visíveis sem rolagem lateral. */
+@media (max-width: 850px) {
+  #conteudo .sb-page.sb-buyer .buyer-section-nav {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    row-gap: 10px;
+  }
+}
+
+/* 3. Áreas de toque: ampliadas por camada invisível, sem deslocar o layout
+   nem mudar o desenho dos elementos. */
+#conteudo .sb-page.sb-buyer .breadcrumb a,
+#conteudo .sb-page.sb-buyer .circuit-selected-bar button.text-button,
+#conteudo .sb-page.sb-buyer .faq-layout a.text-link,
+#conteudo .sb-page.sb-buyer .contact-field-help a { position: relative; }
+
+#conteudo .sb-page.sb-buyer .breadcrumb a::after,
+#conteudo .sb-page.sb-buyer .circuit-selected-bar button.text-button::after,
+#conteudo .sb-page.sb-buyer .faq-layout a.text-link::after,
+#conteudo .sb-page.sb-buyer .contact-field-help a::after {
+  content: '';
+  position: absolute;
+  inset: -11px -6px;
+}
+
+@media (max-width: 850px) {
+  #conteudo .sb-page.sb-buyer .buyer-section-nav a { padding: 10px 12px; position: relative; }
+  #conteudo .sb-page.sb-buyer .buyer-section-nav a::after {
+    content: '';
+    position: absolute;
+    inset: -5px -2px;
+  }
+  #conteudo .sb-page.sb-buyer .hb-controls .hb-search input { padding-block: 10px; }
+}
+
+/* 4. Etiquetas e legendas: tamanho mínimo confortável em telas estreitas,
+   mantendo caixa alta, espaçamento entre letras e cores da marca. */
+@media (max-width: 600px) {
+  #conteudo .sb-page.sb-buyer .tag { font-size: 12px; line-height: 1.5; }
+  #conteudo .sb-page.sb-buyer .eyebrow { font-size: 12.5px; line-height: 1.6; }
+  #conteudo .sb-page.sb-buyer .audience-hero-image figcaption,
+  #conteudo .sb-page.sb-buyer figcaption { font-size: 13px; line-height: 1.5; }
+  #conteudo .sb-page.sb-buyer .buyer-section-nav > span,
+  #conteudo .sb-page.sb-buyer .buyer-section-nav a { font-size: 12.5px; }
+}

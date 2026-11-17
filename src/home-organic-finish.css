@@ -1,0 +1,156 @@
+/* Acabamento da referência: vetores decorativos independentes, sem novas etapas. */
+#conteudo .sb-home .home-organic-wave{display:block;position:absolute;left:0;bottom:-1px;width:100%;height:100px;pointer-events:none;overflow:visible}
+#conteudo .sb-home .home-wave-pink{fill:#f50773}
+#conteudo .sb-home .home-wave-yellow{fill:#ffcc28}
+#conteudo .sb-home .home-wave-blue{fill:#05b9df}
+#conteudo .sb-home .home-hero-v2{position:relative;isolation:isolate}
+#conteudo .sb-home .home-hero-v2::before{display:none}
+#conteudo .sb-home .home-hero-v2 .new-hero-inner{padding-bottom:108px}
+#conteudo .sb-home .home-organic-wave--hero{z-index:0;height:112px}
+#conteudo .sb-home .v5-audiences{position:relative;isolation:isolate;padding-bottom:108px}
+#conteudo .sb-home .v5-audiences>.container{position:relative;z-index:1}
+#conteudo .sb-home .home-organic-wave--circuit{height:62px;z-index:0}
+#conteudo .sb-home .home-organic-wave--circuit .home-wave-pink{fill:#fff0f7}
+#conteudo .sb-home .home-organic-wave--circuit .home-wave-yellow{fill:#fff6df}
+#conteudo .sb-home .home-organic-wave--circuit .home-wave-blue{fill:#f1efff}
+#conteudo .sb-home .home-closing{position:relative;isolation:isolate;overflow:hidden;padding-top:68px}
+#conteudo .sb-home .home-closing__inner{position:relative;z-index:1}
+#conteudo .sb-home .home-organic-wave--closing{top:-1px;bottom:auto;height:25px;transform:rotate(180deg);z-index:0}
+#conteudo .sb-home .home-organic-wave--closing .home-wave-pink{fill:#fff}
+#conteudo .sb-home .home-organic-wave--closing .home-wave-yellow{fill:#ffe087}
+#conteudo .sb-home .home-organic-wave--closing .home-wave-blue{fill:#fff}
+#conteudo .sb-home .home-closing-spark{position:absolute;width:68px;height:68px;right:18px;bottom:8px;color:#ffd044;opacity:.18;pointer-events:none;z-index:0}
+@media(max-width:800px){
+ #conteudo .sb-home .home-hero-v2 .new-hero-inner{padding-bottom:88px}
+ #conteudo .sb-home .home-organic-wave--hero{height:80px}
+ #conteudo .sb-home .v5-audiences{padding-bottom:88px}
+ #conteudo .sb-home .home-organic-wave--circuit{height:48px}
+}
+@media(max-width:540px){
+ #conteudo .sb-home .v5-hero-scene{min-height:350px;width:100%;margin-top:12px}
+ #conteudo .sb-home .v5-hero-scene__photo{inset:6% 3% 10% 4%}
+ #conteudo .sb-home .v5-hero-scene__frame{inset:2% 0 7% 0;width:100%;height:91%}
+ #conteudo .sb-home .v5-hero-toy--train{width:59%;left:0;bottom:0}
+ #conteudo .sb-home .v5-hero-toy--rocket{width:84px;right:0;top:0}
+ #conteudo .sb-home .v5-hero-toy--blocks{width:67px;left:0;top:0}
+ #conteudo .sb-home .v5-hero-scene__seal--art{width:80px;right:0;top:36%}
+ #conteudo .sb-home .v5-hero-toy--star{width:65px;right:0;bottom:3%}
+ #conteudo .sb-home .home-hero-v2 .new-hero-inner{padding-bottom:78px}
+ #conteudo .sb-home .home-organic-wave--hero{height:65px}
+ #conteudo .sb-home .home-closing{padding-top:60px}
+ #conteudo .sb-home .home-closing-spark{width:48px;height:48px;right:8px;bottom:8px}
+}
+/* Fotografias reais alternadas dentro da moldura; ornamentos seguem independentes. */
+#conteudo .sb-home .v5-hero-scene__photo .hero-real-photo{position:absolute;inset:0;opacity:0;transition:opacity .65s ease}
+#conteudo .sb-home .v5-hero-scene__photo .hero-real-photo.is-active{opacity:1}
+#conteudo .sb-home .hero-photo-controls{position:absolute;right:9%;bottom:18%;display:flex;align-items:center;gap:4px;padding:5px 7px;border-radius:999px;background:#173c52e8;color:#fff;z-index:7;box-shadow:0 4px 12px #173c5225}
+#conteudo .sb-home .hero-photo-controls span{font-size:11px;font-weight:800;padding-inline:4px}
+#conteudo .sb-home .hero-photo-controls button{display:grid;place-items:center;width:32px;height:32px;padding:0;border:0;border-radius:50%;background:#ffffff20;color:#fff;cursor:pointer}
+#conteudo .sb-home .hero-photo-controls button:hover{background:#ffffff40}
+#conteudo .sb-home .hero-photo-controls button:focus-visible{outline:3px solid #ffd329;outline-offset:2px}
+@media(max-width:540px){#conteudo .sb-home .hero-photo-controls{right:6%;bottom:19%;padding:4px;gap:2px}#conteudo .sb-home .hero-photo-controls button{width:29px;height:31px}}
+@media(prefers-reduced-motion:reduce){#conteudo .sb-home .v5-hero-scene__photo .hero-real-photo{transition:none}}
+/* Acervo em uma faixa: detalhes e mídias continuam na página de registros. */
+#conteudo .sb-home .home-archive-invite{position:relative;padding-block:30px;background:linear-gradient(110deg,#fff4e1,#fff8f0 60%,#fff0f6);border-block:1px solid #f0e4cf}
+#conteudo .sb-home .home-archive-invite__inner{display:flex;align-items:center;justify-content:space-between;gap:28px}
+#conteudo .sb-home .home-archive-invite h2{font-size:clamp(1.35rem,2vw,1.8rem);line-height:1.2;color:#173c52;margin:0 0 10px;letter-spacing:-.025em}
+#conteudo .sb-home .home-archive-invite p{font-size:.96rem;line-height:1.6;max-width:66ch;color:#435564;margin:0}
+#conteudo .sb-home .home-archive-invite .btn{flex-shrink:0;background:#fff;border:1px solid #173c52;color:#173c52;min-height:46px;display:inline-flex;align-items:center;justify-content:center;gap:9px;text-align:center}
+@media(max-width:800px){#conteudo .sb-home .home-archive-invite__inner{align-items:flex-start;flex-direction:column;gap:18px}}
+@media(max-width:540px){#conteudo .sb-home .home-archive-invite{padding-block:26px}#conteudo .sb-home .home-archive-invite .btn{width:100%;white-space:normal}}
+/* Estreia em SP como marco editorial, sem nova etapa no funil. */
+#conteudo .sb-home .home-sp-milestone{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;margin-block:22px;padding:30px 34px;border:1px solid #f6c9dc;border-radius:26px;background:linear-gradient(115deg,#fff1f7,#ffe4f0);max-width:1160px;width:calc(100% - 80px)}
+#conteudo .sb-home .home-sp-milestone::before{content:"";position:absolute;z-index:-1;width:270px;height:230px;right:-60px;top:-70px;border:24px solid #f8a7cd55;border-radius:43% 57% 66% 34%;transform:rotate(19deg)}
+#conteudo .sb-home .home-sp-milestone .eyebrow{font-size:.72rem;color:#b70856;font-weight:900;letter-spacing:.08em}
+#conteudo .sb-home .home-sp-milestone h2{font-size:clamp(1.45rem,2.4vw,2rem);line-height:1.15;letter-spacing:-.03em;max-width:28ch;color:#173c52;margin:12px 0}
+#conteudo .sb-home .home-sp-milestone p{font-size:.94rem;line-height:1.65;max-width:66ch;margin:0 0 14px;color:#435564}
+#conteudo .sb-home .home-sp-milestone strong{font-size:.85rem;color:#8f164c}
+#conteudo .sb-home .home-sp-milestone__action{display:flex;flex-direction:column;align-items:center;gap:14px;max-width:320px}
+#conteudo .sb-home .home-sp-milestone__action img{display:block;width:100px;height:85px;object-fit:contain;transform:rotate(-8deg);filter:drop-shadow(0 7px 8px #af286a20)}
+#conteudo .sb-home .home-sp-milestone a.btn{white-space:normal;text-decoration:none;text-align:center;color:white;font-size:.86rem;display:inline-flex;justify-content:center;min-height:48px}
+#conteudo .sb-home .v5-audience__visual{padding-top:14px}
+#conteudo .sb-home .v5-audience__toy{width:112px;top:-26px;right:-7%;height:auto;overflow:visible;filter:drop-shadow(0 8px 8px #1e16312b)}
+#conteudo .sb-home .v5-audience__toy--lojista{width:110px;top:-25px;right:-7%}
+/* A faixa do acervo conduz diretamente à história, sem repetir CTAs intermediários. */
+#conteudo .sb-home .home-archive-invite{border-bottom:0;background:linear-gradient(110deg,#fff4e1,#fff8f0 60%,#fff0f6)}
+#conteudo .sb-home #quem-somos{border-top:1px solid #f0e4cf;padding-top:42px}
+@media(max-width:800px){
+ #conteudo .sb-home .home-sp-milestone{grid-template-columns:1fr;padding:26px;gap:18px}
+ #conteudo .sb-home .home-sp-milestone__action{flex-direction:row;max-width:none;justify-content:flex-start}
+ #conteudo .sb-home .home-sp-milestone__action img{width:72px;height:64px}
+ #conteudo .sb-home .v5-audience__toy{width:100px;right:-3%;top:-23px}
+}
+@media(max-width:540px){
+ #conteudo .sb-home .home-sp-milestone{width:calc(100% - 36px);padding:24px 22px;margin-block:18px;border-radius:22px}
+ #conteudo .sb-home .home-sp-milestone h2{font-size:1.5rem;max-width:24ch}
+ #conteudo .sb-home .home-sp-milestone__action{align-items:center;gap:8px}
+ #conteudo .sb-home .home-sp-milestone__action img{width:60px;flex-shrink:0;height:56px}
+ #conteudo .sb-home .home-sp-milestone a.btn{font-size:.8rem;padding:12px;gap:6px}
+ #conteudo .sb-home .v5-audience__toy{width:94px;top:-24px;right:-3%}
+ #conteudo .sb-home .v5-audience__toy--lojista{width:92px}
+ #conteudo .sb-home #quem-somos{padding-top:34px}
+}
+/* História → fechamento: onda horizontal e dois pequenos objetos nas bordas. */
+#conteudo .sb-home .home-closing{padding-top:82px;padding-bottom:64px}
+#conteudo .sb-home .home-organic-wave--closing{height:42px}
+#conteudo .sb-home .home-organic-wave--closing .home-wave-pink{fill:#fff}
+#conteudo .sb-home .home-organic-wave--closing .home-wave-yellow{fill:#ffe09b}
+#conteudo .sb-home .home-organic-wave--closing .home-wave-blue{fill:#f9b6d6}
+#conteudo .sb-home .home-closing-toy{position:absolute;z-index:0;pointer-events:none;object-fit:contain;width:42px;height:42px;bottom:8px;opacity:.86;filter:drop-shadow(0 4px 5px #071e3028)}
+#conteudo .sb-home .home-closing-toy--block{right:30px;transform:rotate(13deg)}
+#conteudo .sb-home .home-closing-toy--star{left:28px;transform:rotate(-12deg)}
+#conteudo .sb-home .home-closing-spark{display:none}
+@media(max-width:540px){
+ #conteudo .sb-home .home-closing{padding-top:68px;padding-bottom:58px}
+ #conteudo .sb-home .home-organic-wave--closing{height:32px}
+ #conteudo .sb-home .home-closing-toy{width:34px;height:34px;bottom:7px}
+ #conteudo .sb-home .home-closing-toy--block{right:20px}
+ #conteudo .sb-home .home-closing-toy--star{left:20px}
+}
+/* Arte original recebida: bandeira ilustrada como apoio aos blocos, sem texto rasterizado. */
+#conteudo .sb-home .home-sp-milestone{background:linear-gradient(115deg,#fff1f7,#ffe0ee)}
+#conteudo .sb-home .home-sp-milestone__illustration{display:block;width:208px;height:190px;max-width:100%;overflow:hidden;flex-shrink:0;mask-image:linear-gradient(90deg,transparent 0%,#000 12%,#000 94%,transparent 100%);border-radius:24px}
+#conteudo .sb-home .home-sp-milestone__action{gap:8px}
+@media(max-width:800px){#conteudo .sb-home .home-sp-milestone__illustration{width:140px;height:128px}#conteudo .sb-home .home-sp-milestone__action{gap:18px}}
+@media(max-width:540px){#conteudo .sb-home .home-sp-milestone__illustration{width:100px;height:100px}#conteudo .sb-home .home-sp-milestone__action{gap:10px}#conteudo .sb-home .home-sp-milestone__action>.btn{flex:1}}
+/* Kit história/CTA recebido: polaroids originais, curva e ornamentos separados. */
+#conteudo .sb-home #quem-somos{padding-top:54px;padding-bottom:60px;background:#7AD0FF}
+#conteudo .sb-home #quem-somos .funnel-split{grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:50px}
+#conteudo .sb-home #quem-somos .founders-photos{isolation:isolate;max-width:470px;padding:10px 60px 45px 0}
+#conteudo .sb-home #quem-somos .founders-photos .founders-portrait img{max-height:390px!important}
+#conteudo .sb-home #quem-somos .history-kit-curve{position:absolute;z-index:-1;left:-30px;top:12px;width:112%;height:98%;max-height:none!important;object-fit:fill;pointer-events:none}
+#conteudo .sb-home #quem-somos .history-kit-star{position:absolute;z-index:4;right:32px;top:-8px;width:76px;height:76px;max-height:none!important;object-fit:contain;pointer-events:none;transform:rotate(7deg)}
+#conteudo .sb-home #quem-somos .history-kit-rays{position:absolute;z-index:3;right:15px;top:-23px;width:45px;height:42px;max-height:none!important;pointer-events:none;transform:rotate(15deg)}
+#conteudo .sb-home .home-closing{background:#15394b;padding-top:94px;padding-bottom:78px}
+#conteudo .sb-home .history-cta-wave{position:absolute;left:0;top:-1px;width:100%;height:60px;object-fit:fill;pointer-events:none;z-index:0;background:#7AD0FF}
+#conteudo .sb-home .home-closing-toy{opacity:1;bottom:14px;object-fit:contain}
+#conteudo .sb-home .home-closing-toy--star{width:48px;height:48px;left:30px;transform:rotate(-8deg)}
+#conteudo .sb-home .home-closing-toy--block{width:58px;height:50px;right:30px;transform:rotate(6deg)}
+@media(max-width:800px){#conteudo .sb-home #quem-somos .funnel-split{grid-template-columns:1fr;gap:28px}}
+@media(max-width:540px){
+ #conteudo .sb-home #quem-somos{padding-top:38px;padding-bottom:44px}
+ #conteudo .sb-home #quem-somos .founders-photos{max-width:340px;padding:12px 44px 36px 0}
+ #conteudo .sb-home #quem-somos .founders-photos .founders-portrait img{max-height:290px!important}
+ #conteudo .sb-home #quem-somos .history-kit-curve{left:-12px;width:107%;top:8px}
+ #conteudo .sb-home #quem-somos .history-kit-star{right:25px;top:0;width:54px;height:54px}
+ #conteudo .sb-home #quem-somos .history-kit-rays{right:11px;top:-10px;width:32px;height:30px}
+ #conteudo .sb-home .home-closing{padding-top:76px;padding-bottom:68px}
+ #conteudo .sb-home .history-cta-wave{height:40px}
+ #conteudo .sb-home .home-closing-toy--star{width:36px;height:36px;left:20px;bottom:12px}
+ #conteudo .sb-home .home-closing-toy--block{width:44px;height:38px;right:20px;bottom:12px}
+}
+/* Leitura em celulares: rótulos e legendas têm piso de 12 px. */
+@media(max-width:540px){
+ #conteudo .sb-home .home-hero-v2 .new-hero-copy .tag{font-size:12px;line-height:1.45;letter-spacing:.025em}
+ #conteudo .sb-home .v5-audience__tag{font-size:12px;line-height:1.4}
+ #conteudo .sb-home .eyebrow{font-size:12px;line-height:1.5}
+ #conteudo .sb-home .v5-photo-reel__count,#conteudo .sb-home .hero-photo-controls span{font-size:12px;line-height:1.4}
+ #conteudo .sb-home #quem-somos .founders-photos figcaption{font-size:12px;line-height:1.5}
+}
+
+/* Subtle kit ornaments stay inside the photo column; no new layout breakpoint. */
+#conteudo .sb-home #quem-somos :is(p,.eyebrow){color:#15394b}
+#conteudo .sb-home #quem-somos :is(.history-kit-blocks,.history-kit-plane){position:absolute;z-index:4;object-fit:contain;pointer-events:none;max-height:none!important;filter:drop-shadow(0 5px 7px #15394b20)}
+#conteudo .sb-home #quem-somos .history-kit-blocks{width:76px;height:64px;left:0;bottom:-10px;transform:rotate(-8deg)}
+#conteudo .sb-home #quem-somos .history-kit-plane{width:60px;height:60px;right:0;top:42%;transform:rotate(12deg)}
+@media(max-width:540px){#conteudo .sb-home #quem-somos .history-kit-blocks{width:56px;height:48px;bottom:-6px}#conteudo .sb-home #quem-somos .history-kit-plane{width:44px;height:44px;right:0}}

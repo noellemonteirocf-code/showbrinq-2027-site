@@ -1,0 +1,107 @@
+/* Four supplied PNGs, scoped to the existing retailer page. */
+#conteudo .sb-page.sb-buyer .buyer-benefit-visual{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:112px}
+#conteudo .sb-page.sb-buyer .buyer-benefit-art{display:block;width:140px;height:112px;object-fit:contain;flex-shrink:0;transition:translate .2s ease-out;filter:drop-shadow(0 4px 6px #17394c10)}
+#conteudo .sb-page.sb-buyer .benefit-card .benefit-index{position:static;align-self:flex-start;flex-shrink:0}
+#conteudo .sb-page.sb-buyer .tool-card-visitor .visitor-tool-art{display:block;width:112px;height:104px;object-fit:contain;margin-bottom:18px;transition:translate .2s ease-out}
+@media(hover:hover) and (pointer:fine){#conteudo .sb-page.sb-buyer .benefit-card:hover .buyer-benefit-art,#conteudo .sb-page.sb-buyer .tool-card-visitor:hover .visitor-tool-art{translate:0 -3px}}
+#conteudo .sb-page.sb-buyer .tool-card-visitor:focus-visible .visitor-tool-art{translate:0 -3px}
+@media(max-width:600px){#conteudo .sb-page.sb-buyer .buyer-benefit-visual{min-height:88px}#conteudo .sb-page.sb-buyer .buyer-benefit-art{width:112px;height:88px}#conteudo .sb-page.sb-buyer .tool-card-visitor .visitor-tool-art{width:96px;height:88px;margin-bottom:14px}}
+@media(prefers-reduced-motion:reduce){#conteudo .sb-page.sb-buyer :is(.buyer-benefit-art,.visitor-tool-art){transition:none;translate:none!important}}
+
+/* Retailer hero: a light editorial frame, separate from its caption. */
+#conteudo .sb-page.sb-buyer .audience-hero .buyer-editorial-photo{width:min(100%,420px);height:auto;margin:22px auto 10px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;transform:none;overflow:visible}
+#conteudo .sb-page.sb-buyer .audience-hero .buyer-editorial-photo::before,#conteudo .sb-page.sb-buyer .audience-hero .buyer-editorial-photo::after{content:none}
+#conteudo .sb-page.sb-buyer .buyer-editorial-frame{position:relative;isolation:isolate;border:4px solid #fff;border-radius:43% 47% 39% 44% / 31% 36% 36% 39%;box-shadow:0 9px 24px #17394c0c}
+#conteudo .sb-page.sb-buyer .buyer-editorial-frame::before{content:'';position:absolute;inset:7% -5% -3% 6%;z-index:-1;background:#bcece8;border-radius:45% 41% 46% 37% / 34% 43% 37% 41%;transform:rotate(-7deg);pointer-events:none}
+#conteudo .sb-page.sb-buyer .buyer-editorial-frame>img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:contain;border:0;border-radius:inherit;box-shadow:none}
+#conteudo .sb-page.sb-buyer .audience-hero .buyer-editorial-photo > figcaption{position:static;inset:auto;width:auto;margin:16px 0 0;padding:0 10px;background:transparent;color:#405963;border-radius:0;font-size:12px;line-height:1.6;letter-spacing:.01em;text-align:center}
+#conteudo .sb-page.sb-buyer .buyer-editorial-photo .buyer-hero-blocks{width:94px;left:-4%;bottom:0;transform:rotate(-8deg)}
+#conteudo .sb-page.sb-buyer .buyer-editorial-photo .buyer-hero-star{width:70px!important;right:-3%;top:4%;transform:rotate(7deg)}
+#conteudo .sb-page.sb-buyer .buyer-editorial-photo .kit-sticker img{animation:none!important;transition:none!important}
+@media(max-width:850px){#conteudo .sb-page.sb-buyer .audience-hero .buyer-editorial-photo{width:min(88%,380px);margin-top:24px}}
+@media(max-width:600px){#conteudo .sb-page.sb-buyer .audience-hero .buyer-editorial-photo{width:88%;margin-block:20px 8px}#conteudo .sb-page.sb-buyer .buyer-editorial-frame{border-width:3px}#conteudo .sb-page.sb-buyer .buyer-editorial-photo .buyer-hero-blocks{width:72px;left:-5%;bottom:1%}#conteudo .sb-page.sb-buyer .buyer-editorial-photo .buyer-hero-star{width:54px!important;right:-4%;top:5%}}
+#conteudo .sb-page.sb-buyer .audience-hero{animation:none!important}
+
+/* Supplied pink video remains a quiet, one-shot layer behind the editorial hero. */
+#conteudo .sb-page.sb-buyer .audience-hero{position:relative;isolation:isolate;background:#fff5ed}
+#conteudo .sb-page.sb-buyer .audience-hero>.container{position:relative;z-index:1}
+#conteudo .sb-page.sb-buyer .audience-hero>.buyer-hero-background{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.13;pointer-events:none;z-index:-1}
+#conteudo .sb-page.sb-buyer .buyer-hero-divider{position:relative;z-index:2;width:100%;margin:-24px 0 0;background:linear-gradient(#fff5ed,#fffdfb);line-height:0;pointer-events:none}
+#conteudo .sb-page.sb-buyer .buyer-hero-divider>img{display:block;width:100%;height:auto;max-width:none;margin:0;animation:none!important}
+@media(max-width:600px){#conteudo .sb-page.sb-buyer .buyer-hero-divider{margin-top:-8px}}
+@media(prefers-reduced-motion:reduce){#conteudo .sb-page.sb-buyer .audience-hero>.buyer-hero-background{display:none}}
+html[data-motion="off"] #conteudo .sb-page.sb-buyer .audience-hero>.buyer-hero-background{display:none}
+/* Remove only the transparent canvas above/below the supplied wave. */
+#conteudo .sb-page.sb-buyer .buyer-hero-divider{overflow:hidden}
+#conteudo .sb-page.sb-buyer .buyer-hero-divider>img{margin-top:-8.7%;margin-bottom:-8.7%}
+#conteudo .sb-page.sb-buyer .buyer-hero-divider{margin-top:-72px}
+@media(max-width:600px){#conteudo .sb-page.sb-buyer .buyer-hero-divider{margin-top:-48px}}
+#conteudo .sb-page.sb-buyer .buyer-playlist{min-width:0}
+#conteudo .sb-page.sb-buyer .buyer-video-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+#conteudo .sb-page.sb-buyer .buyer-video-options button{display:flex;flex-direction:column;gap:8px;min-width:0;padding:8px;border:2px solid #d7dfe1;border-radius:14px;background:#fff;color:#17394b;text-align:left;cursor:pointer;font:inherit;font-size:12px;line-height:1.5;font-weight:600}
+#conteudo .sb-page.sb-buyer .buyer-video-options button[aria-pressed="true"]{border-color:#d20762;background:#fff0f6}
+#conteudo .sb-page.sb-buyer .buyer-video-options button:focus-visible{outline:3px solid #165572;outline-offset:3px}
+#conteudo .sb-page.sb-buyer .buyer-video-options img{width:100%;height:90px;object-fit:cover;border-radius:8px}
+@media(max-width:600px){#conteudo .sb-page.sb-buyer .buyer-video-options{grid-template-columns:1fr}#conteudo .sb-page.sb-buyer .buyer-video-options button{flex-direction:row;align-items:center;font-size:14px}#conteudo .sb-page.sb-buyer .buyer-video-options img{width:70px;height:70px;flex-shrink:0}}
+/* Latest approved retailer hero colors and supplied transparent 3D frame. */
+#conteudo .sb-page.sb-buyer .audience-hero{background:#b9f6fb;color:#031722}
+#conteudo .sb-page.sb-buyer .audience-hero h1{color:#031722}
+#conteudo .sb-page.sb-buyer .audience-hero .buyer-universe{width:min(100%,560px)}
+#conteudo .sb-page.sb-buyer .buyer-universe .buyer-editorial-frame{border:0;border-radius:0;box-shadow:none;aspect-ratio:13/12}
+#conteudo .sb-page.sb-buyer .buyer-universe .buyer-editorial-frame::before{content:none}
+#conteudo .sb-page.sb-buyer .buyer-universe .buyer-editorial-frame>img:not(.buyer-universe-overlay){position:absolute;left:12%;top:11%;width:77%;height:80%;aspect-ratio:auto;object-fit:cover;object-position:50% 68%;border:3px solid white;border-radius:48%}
+#conteudo .sb-page.sb-buyer .buyer-universe .buyer-editorial-frame>.buyer-universe-overlay{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border:0;border-radius:0;aspect-ratio:auto;pointer-events:none;z-index:2}
+#conteudo .sb-page.sb-buyer .buyer-hero-divider{background:linear-gradient(#b9f6fb,#fffdfb);margin-top:-92px}
+#conteudo .sb-page.sb-buyer .buyer-hero-divider+.section{padding-top:40px}
+#conteudo .sb-page.sb-buyer .benefit-card{padding:26px}
+#conteudo .sb-page.sb-buyer .buyer-benefit-visual{min-height:88px}
+#conteudo .sb-page.sb-buyer .benefit-card h3{margin-top:12px}
+#conteudo .sb-page.sb-buyer .real-stories{position:relative;isolation:isolate;background:#fff3f8}
+#conteudo .sb-page.sb-buyer .real-stories>.container{position:relative;z-index:1}
+#conteudo .sb-page.sb-buyer .real-stories>.buyer-hero-background{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.1;pointer-events:none;z-index:-1}
+#conteudo .sb-page.sb-buyer .buyer-story-decoration{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden}
+#conteudo .sb-page.sb-buyer .buyer-story-star{position:absolute;right:3%;top:24px;width:55px}
+#conteudo .sb-page.sb-buyer .buyer-story-blocks{position:absolute;right:3%;bottom:24px;width:70px}
+#conteudo .sb-page.sb-buyer .real-stories .section-top{padding-right:65px}
+html[data-motion="on"] #conteudo .sb-page.sb-buyer .buyer-story-decoration[data-entered="true"] img{animation:buyer-story-enter .6s ease-out both}
+@keyframes buyer-story-enter{from{opacity:0;transform:translateY(12px) rotate(-5deg)}to{opacity:1;transform:translateY(0) rotate(0)}}
+@media(max-width:850px){#conteudo .sb-page.sb-buyer .audience-hero-grid{gap:18px}#conteudo .sb-page.sb-buyer .audience-hero .buyer-universe{width:min(100%,480px);margin-block:14px 10px}}
+@media(max-width:600px){#conteudo .sb-page.sb-buyer .audience-hero .buyer-universe{width:100%}#conteudo .sb-page.sb-buyer .buyer-hero-divider{margin-top:-52px}#conteudo .sb-page.sb-buyer .benefit-card{padding:22px}#conteudo .sb-page.sb-buyer .buyer-benefit-visual{min-height:72px}#conteudo .sb-page.sb-buyer .buyer-playlist .real-video-card video{height:min(112vw,440px);max-height:440px;object-fit:contain}#conteudo .sb-page.sb-buyer .buyer-playlist .real-video-card>div{padding:18px}#conteudo .sb-page.sb-buyer .buyer-playlist h3{font-size:21px!important}#conteudo .sb-page.sb-buyer .buyer-story-star{width:40px;right:18px;top:18px}#conteudo .sb-page.sb-buyer .buyer-story-blocks{width:48px;right:16px;bottom:10px}#conteudo .sb-page.sb-buyer .real-stories .section-top{padding-right:42px}}
+@media(prefers-reduced-motion:reduce){#conteudo .sb-page.sb-buyer .real-stories>.buyer-hero-background{display:none}html[data-motion] #conteudo .sb-page.sb-buyer .buyer-story-decoration img{animation:none!important}}
+html[data-motion="off"] #conteudo .sb-page.sb-buyer .real-stories>.buyer-hero-background{display:none}
+/* Equal editorial weight for the copy and real photograph. */
+@media(min-width:851px){#conteudo .sb-page.sb-buyer .audience-hero-grid{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:32px}#conteudo .sb-page.sb-buyer .audience-hero h1{font-size:clamp(38px,3.8vw,56px)!important;max-width:19ch}#conteudo .sb-page.sb-buyer .audience-hero .buyer-universe{width:100%;max-width:660px}}
+#conteudo .sb-page.sb-buyer .steps-section{background-color:#11aed1;background-image:url('/assets/showbrinq-kit/07-nuvem-cheia.svg'),url('/assets/showbrinq-kit/07-nuvem-cheia.svg');background-repeat:no-repeat;background-size:180px auto,240px auto;background-position:8% 30px,93% 90%}
+#conteudo .sb-page.sb-buyer .steps-section::before{animation:none!important}
+#conteudo .sb-page.sb-buyer .buyer-registration-link{margin-top:28px;position:relative;z-index:1}
+#conteudo .sb-page.sb-buyer .buyer-registration-link .btn{background:white;color:#123749}
+@media(max-width:600px){#conteudo .sb-page.sb-buyer .steps-section{background-size:110px auto,160px auto;background-position:95% 20px,5% 95%}}
+#conteudo .sb-page.sb-buyer .tool-card-pink .supplier-tool-art{width:160px;height:140px;display:block;object-fit:contain;margin-bottom:18px}
+@media(max-width:600px){#conteudo .sb-page.sb-buyer .tool-card-pink .supplier-tool-art{width:130px;height:114px}}
+#conteudo .sb-page.sb-buyer .steps-section #credenciamento-cidades{background-color:#08ace1}
+
+/* Premium polish: internal video navigation and balanced historical media. */
+#conteudo .sb-page.sb-buyer .buyer-video-navigation{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+#conteudo .sb-page.sb-buyer .buyer-video-navigation button{width:44px;height:44px;border:1px solid #cbdde2;border-radius:50%;background:#fff;color:#17394b;font-size:22px;cursor:pointer}
+#conteudo .sb-page.sb-buyer .buyer-video-options{display:flex;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:thin;padding:4px 4px 10px;margin-top:4px;position:relative}
+#conteudo .sb-page.sb-buyer .buyer-video-options button{flex:0 0 170px;scroll-snap-align:start;font-size:14px;transition:border-color .18s,background-color .18s}
+#conteudo .sb-page.sb-buyer .buyer-video-options img{height:96px;object-fit:contain;background:#f5f0ee}
+#conteudo .sb-page.sb-buyer .buyer-video-navigation button:focus-visible{outline:3px solid #165572;outline-offset:3px}
+#conteudo .sb-page.sb-buyer .real-stories-buyer{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:26px;align-items:start}
+#conteudo .sb-page.sb-buyer .real-story-photos{padding-top:0;margin:0;gap:14px;align-items:start}
+#conteudo .sb-page.sb-buyer .real-story-photos img{object-fit:contain;border-width:5px;border-radius:24px;box-shadow:0 8px 20px #17394b12}
+#conteudo .sb-page.sb-buyer .real-story-photos img:nth-child(2){margin-top:24px;border-radius:24px}
+#conteudo .sb-page.sb-buyer .real-story-photos p{font-size:14px;line-height:1.6;margin:0}
+#conteudo .sb-page.sb-buyer .real-stories .section-top{padding-right:0}
+#conteudo .sb-page.sb-buyer .real-stories .section-top h2{max-width:28ch}
+#conteudo .sb-page.sb-buyer .buyer-story-star{top:8px;width:36px;right:12px}
+#conteudo .sb-page.sb-buyer .benefit-card p{font-size:16px;line-height:1.65}
+#conteudo .sb-page.sb-buyer :is(#beneficios-lojistas,#relatos-da-feira,#cidades-lojistas,#planejar-lojistas){scroll-margin-top:130px}
+@media(max-width:850px){#conteudo .sb-page.sb-buyer .real-stories-buyer{grid-template-columns:1fr}#conteudo .sb-page.sb-buyer .real-story-photos{width:100%;max-width:620px;justify-self:center}#conteudo .sb-page.sb-buyer .real-story-photos img{max-height:240px}#conteudo .sb-page.sb-buyer .real-story-photos img:nth-child(2){margin-top:0}}
+@media(max-width:600px){#conteudo .sb-page.sb-buyer .buyer-video-options button{flex:0 0 220px;flex-direction:row;min-height:94px}#conteudo .sb-page.sb-buyer .buyer-video-options img{width:76px;height:76px}#conteudo .sb-page.sb-buyer .real-stories .section-top h2{max-width:none}#conteudo .sb-page.sb-buyer .buyer-hero-divider{width:94%;margin-left:3%;margin-top:-48px}#conteudo .sb-page.sb-buyer .real-story-photos img{max-height:185px}#conteudo .sb-page.sb-buyer .benefit-grid{gap:18px}#conteudo .sb-page.sb-buyer .benefit-card h3{line-height:1.2}}
+@media(prefers-reduced-motion:reduce){#conteudo .sb-page.sb-buyer .buyer-video-options button{transition:none}}
+/* Portrait photos use their natural proportions instead of wide letterboxing. */
+#conteudo .sb-page.sb-buyer .real-story-photos{grid-template-columns:repeat(2,minmax(0,181px));justify-content:space-evenly;align-items:start;gap:20px;width:100%}
+#conteudo .sb-page.sb-buyer .real-story-photos img{width:100%;height:auto;max-height:none;aspect-ratio:3/4;object-fit:contain;border:5px solid #2535ad;box-sizing:border-box}
+#conteudo .sb-page.sb-buyer .real-story-photos img:nth-child(2){border-color:#c7f318;margin-top:-4px}
+@media(max-width:600px){#conteudo .sb-page.sb-buyer .real-story-photos{gap:14px;grid-template-columns:repeat(2,minmax(0,160px))}}

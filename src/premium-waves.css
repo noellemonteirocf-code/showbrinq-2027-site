@@ -1,0 +1,59 @@
+/* Original panoramic artwork stays proportional; negative margins remove empty
+   layout space without clipping the transparent canvas or toy shadows. */
+.premium-wave{position:relative;z-index:1;display:flow-root;width:100%;pointer-events:none;line-height:0}
+.premium-wave img{display:block;width:100%;height:auto;max-width:none;margin-top:-5%;margin-bottom:-4%}
+#conteudo .sb-home .home-hero-v2 .new-hero-inner{padding-bottom:65px}
+#conteudo .sb-home .v5-audiences{padding-bottom:45px}
+#conteudo .sb-home .home-sp-milestone{grid-template-columns:minmax(0,1.3fr) minmax(250px,.7fr);border-color:#f5a4ca;box-shadow:0 12px 28px #d2076210}
+#conteudo .sb-home .home-sp-milestone .eyebrow{display:inline-block;padding:9px 14px;background:#fff;border-radius:999px;color:#c80057;font-size:13px;box-shadow:0 4px 12px #e6006d12}
+#conteudo .sb-home .home-sp-milestone__action{max-width:none;align-self:center}
+#conteudo .sb-home .home-sp-milestone__illustration{width:clamp(170px,22vw,280px)!important;height:auto!important;max-width:100%;filter:drop-shadow(0 10px 12px #a12b5820)}
+#conteudo .sb-home .home-sp-milestone a.btn{font-size:15px;min-height:52px}
+#conteudo .sb-home .home-sp-milestone h2{font-size:clamp(25px,2.8vw,36px)}
+#conteudo .sb-home .home-sp-milestone p{font-size:16px}
+.expo-page .premium-wave{margin-block:0}
+@media(max-width:800px){#conteudo .sb-home .home-sp-milestone{grid-template-columns:1fr}#conteudo .sb-home .home-sp-milestone__action{justify-content:center;gap:20px}#conteudo .sb-home .home-sp-milestone__illustration{width:180px!important}}
+@media(max-width:540px){#conteudo .sb-home .home-sp-milestone__action{flex-direction:column;gap:8px}#conteudo .sb-home .home-sp-milestone__illustration{width:170px!important}#conteudo .sb-home .home-sp-milestone .eyebrow{font-size:11px}#conteudo .sb-home .home-hero-v2 .new-hero-inner{padding-bottom:40px}#conteudo .sb-home .v5-audiences{padding-bottom:30px}.premium-wave img{margin-top:-4%;margin-bottom:-3%}}
+/* Join the history and closing surfaces instead of introducing a cream band. */
+#conteudo .sb-home>.premium-wave--home-onda-fita-elegante-3d{background:linear-gradient(to bottom,#7ad0ff 0 55%,#173b4c 55% 100%)}
+#conteudo .sb-home>.premium-wave--home-onda-fita-elegante-3d img{margin-top:-10%;margin-bottom:-3%}
+@media(max-width:540px){#conteudo .sb-home>.premium-wave--home-onda-fita-elegante-3d img{margin-top:-8%;margin-bottom:-3%}}
+/* Approved closing palette, shared at every viewport. */
+#conteudo .sb-home #contato.home-closing{background:#ffeebe;color:#0f59c8}
+#conteudo .sb-home #home-closing-title{color:#0f59c8}
+#conteudo .sb-home .home-closing__inner .eyebrow{color:#c9155a}
+#conteudo .sb-home .home-closing__actions .btn-outline{color:#1749c2;border-color:#474c9f;background:transparent}
+#conteudo .sb-home .home-closing__actions .btn-outline:hover{background:#fff8e8}
+#conteudo .sb-home>.premium-wave--home-onda-fita-elegante-3d{background:linear-gradient(to bottom,#7ad0ff 0 55%,#ffeebe 55% 100%)}
+#root>footer.site-footer{background:#f4a532;color:#132b48}
+#root>footer.site-footer :is(h2,h3,h4,p,a,small,span){color:#132b48}
+#root>footer.site-footer a:hover{color:#6b1749;text-decoration:underline}
+#root>footer.site-footer .footer-bottom{border-color:#132b4845}
+/* Reclaim transparent canvas below audience cards; never fix content height. */
+#conteudo .sb-home #caminhos .premium-wave--home-onda-suave-turquesa-3d img{margin-top:-14%;margin-bottom:-8%}
+#conteudo .sb-home #contato.home-closing .eyebrow{color:#c9155a}
+#conteudo .sb-home #contato.home-closing .btn-outline{color:#1749c2;border-color:#474c9f;background:transparent}
+
+/* Regional registration keeps the same compact rhythm across all six editions. */
+#conteudo .city-local-registration{padding-block:35px}
+@media(max-width:600px){#conteudo .city-local-registration{padding-block:28px}}
+/* Homepage spacing polish: intrinsic sizes preserve copy and carousel controls. */
+#conteudo .sb-home #a-feira .new-hero-inner{padding-top:24px;padding-bottom:28px;gap:18px}
+#conteudo .sb-home #caminhos{padding-top:32px;padding-bottom:0}
+#conteudo .sb-home #caminhos .v5-audiences__grid{gap:18px}
+#conteudo .sb-home #quem-somos .eyebrow{padding-bottom:10px;margin-bottom:0}
+#conteudo .sb-home #contato.home-closing{padding-top:59px;padding-bottom:59px}
+#root>footer.site-footer{padding-top:13px}
+@media(min-width:541px) and (max-width:1100px){
+ #conteudo .sb-home #caminhos .v5-audience{padding-block:22px}
+ #conteudo .sb-home #caminhos .v5-photo-reel{max-height:300px;aspect-ratio:1/1}
+ #conteudo .sb-home #a-feira .v5-hero-scene{min-height:400px}
+}
+@media(max-width:540px){
+ #conteudo .sb-home #a-feira .new-hero-inner{padding-top:24px;padding-bottom:24px}
+ #conteudo .sb-home #contato.home-closing{padding-top:38px;padding-bottom:54px}
+}
+/* Treat the train artwork as the opening trim of the audience section. */
+#conteudo .sb-home>.premium-wave--home-onda-trenzinho-3d{margin-bottom:-1px;background:#fffaf2}
+#conteudo .sb-home>.premium-wave--home-onda-trenzinho-3d img{margin-top:-7%;margin-bottom:-6%}
+#conteudo .sb-home #caminhos{padding-top:18px}

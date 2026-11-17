@@ -1,0 +1,7 @@
+/* Arquivo oficial enviado pela organização, sem cortes ou recoloração. */
+.site-header .logo-link,.site-header[data-brand-preview] .logo-link{display:flex;align-items:center;justify-content:flex-start;width:148px;flex:0 0 148px;overflow:visible}
+.site-header .logo-link img,.site-header[data-brand-preview] .logo-link img{display:block;width:148px!important;height:auto!important;max-width:100%;max-height:82px;object-fit:contain;position:static;transform:none}
+.site-header .nav-inner{min-height:100px}
+.site-footer .footer-brand>img{display:block;width:180px;height:auto;max-height:none;object-fit:contain}
+@media(min-width:1351px){.site-header[data-brand-preview] .desktop-nav{gap:12px}.site-header[data-brand-preview] .desktop-nav a{font-size:11px}.site-header[data-brand-preview] .nav-inner{gap:18px}}
+@media(max-width:600px){.site-header .logo-link,.site-header[data-brand-preview] .logo-link{width:124px;flex-basis:124px}.site-header .logo-link img,.site-header[data-brand-preview] .logo-link img{width:124px!important;max-height:70px}.site-header .nav-inner,.site-header[data-brand-preview] .nav-inner{min-height:86px}}

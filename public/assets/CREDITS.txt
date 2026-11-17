@@ -1,0 +1,7 @@
+Fotos e logos reutilizados do site SHOWBRINQ fornecido pelo usuário. Fotografias apresentadas como registros de edição anterior de Pernambuco; marcas participantes de 2026, sem confirmação para 2027.
+Contorno cartográfico: API de Malhas do IBGE https://servicodados.ibge.gov.br/api/v3/malhas/paises/BR?formato=application/vnd.geo%2Bjson&qualidade=minima . Rota e posições são ilustrativas, não navegação.
+
+Bandeiras atuais dos estados MA,CE,PE,BA,GO,SP: Wikimedia Commons, galeria https://commons.wikimedia.org/wiki/Flags_of_states_of_Brazil. Símbolos usados como identificação geográfica, sem patrocínio governamental. Nomes dos arquivos no registro materials/sources.md.
+Hotéis: PDF enviado pela SHOWBRINQ, identificado como 2026. Fonte original preservada; dados de 2027 a confirmar.
+
+Fotos event-photo-01..09.webp e vídeos event-product-demo-edited.mp4/event-representative-testimonial-edited.mp4: versões editadas de anexos enviados pela SHOWBRINQ em 10/11/2026. Fontes de trabalho preservadas em materials/video-sources/ e cortes registrados em materials/media-manifest.json; MOV originais permanecem intactos. Registro histórico; sem cidade/ano presumido nem autoplay. Um depoimento que terminava no meio de uma frase foi retirado da prévia; sem completar fala por edição. Acervo adicional de logos 2026: pastas Drive fornecidas pela SHOWBRINQ, acesso somente leitura; lista não exaustiva. Ativos sem imagem aparecem como nomes textuais, não logos fictícios.

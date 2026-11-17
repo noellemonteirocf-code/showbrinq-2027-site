@@ -1,0 +1,45 @@
+{
+  "collection": "Acervo 2026 fornecido pela organização",
+  "autoplay": false,
+  "notes": "Sem cortes, sem trilha adicional, sem identificação presumida de pessoas. Não confirma participantes ou ofertas de 2027. HDR do IMG_4397 convertido tecnicamente para SDR Rec.709 para compatibilidade web. Metadados de localização removidos das cópias web.",
+  "videos": [
+    {
+      "id": "percurso-feira-2026",
+      "durationSeconds": 109.28,
+      "posterTimeSeconds": 100,
+      "title": "Um percurso pela feira",
+      "description": "Registro que começa na entrada sinalizada da Showbrinq e percorre os corredores, estandes e mesas de atendimento.",
+      "hdr": false,
+      "src": "/assets/acervo-2026-videos/percurso-feira-2026.mp4",
+      "poster": "/assets/acervo-2026-videos/percurso-feira-2026.jpg",
+      "bytes": 15769917,
+      "fullLength": true,
+      "audio": "Original AAC stereo preserved in full; browser-compatible AAC transcode",
+      "metadataRemoved": true,
+      "sourceFilename": "WhatsApp Video 2026-06-10 at 10.35.03.mp4",
+      "outputDurationSeconds": 109.28,
+      "videoEncoding": "H.264 original remuxed without re-encoding",
+      "decodeVerified": true,
+      "faststartVerified": true
+    },
+    {
+      "id": "ambiente-feira-2026",
+      "durationSeconds": 7.81,
+      "posterTimeSeconds": 1,
+      "title": "O ambiente do showroom",
+      "description": "Registro vertical curto do salão, com produtos expostos, pessoas nos corredores e mesas de atendimento.",
+      "hdr": true,
+      "src": "/assets/acervo-2026-videos/ambiente-feira-2026.mp4",
+      "poster": "/assets/acervo-2026-videos/ambiente-feira-2026.jpg",
+      "bytes": 1574812,
+      "fullLength": true,
+      "audio": "Original AAC stereo preserved in full; browser-compatible AAC transcode",
+      "metadataRemoved": true,
+      "sourceFilename": "IMG_4397.MOV",
+      "outputDurationSeconds": 7.81,
+      "videoEncoding": "H.264 SDR Rec.709, 540×960",
+      "decodeVerified": true,
+      "faststartVerified": true
+    }
+  ]
+}

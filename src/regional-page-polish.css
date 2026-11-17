@@ -1,0 +1,37 @@
+/* Regional pages: two distinct choices without duplicating the main exhibitor/visitor funnels. */
+.city-edition-journeys .section-top h2{max-width:760px;text-wrap:balance}
+.city-edition-journeys__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;margin-top:28px}
+.city-edition-journeys__grid article{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:14px;padding:clamp(22px,3.2vw,40px);border:1px solid rgba(17,40,72,.08);border-radius:28px}
+.city-edition-journeys__exhibitor{background:#fff0f6}
+.city-edition-journeys__buyer{background:#e9f8fc}
+.city-edition-journeys__grid article>span{font-size:.75rem;font-weight:800;letter-spacing:.09em;color:#c60067}
+.city-edition-journeys__buyer>span{color:#076b83!important}
+.city-edition-journeys__grid h3{font-size:clamp(1.45rem,2.3vw,2.05rem);line-height:1.15;letter-spacing:-.035em;margin:0;text-wrap:balance;color:#132b48}
+.city-edition-journeys__grid p{color:#486173;line-height:1.65;max-width:530px;margin:0;flex:1}
+.city-edition-journeys__grid .btn{white-space:normal;text-align:center}
+.city-edition-journeys__secondary{font-weight:700;text-underline-offset:4px;color:#122b48}
+@media(max-width:760px){.city-edition-journeys__grid{grid-template-columns:1fr;gap:14px}.city-edition-journeys__grid article{padding:24px}.city-edition-journeys__grid .btn{width:100%;justify-content:center}}
+@media(prefers-reduced-motion:reduce){.city-edition-journeys__grid *{scroll-behavior:auto}}
+
+/* Headings remain readable in full-page previews and when motion triggers are late. */
+.city-edition-journeys .section-top,
+.city-local-service .section-top,
+.city-local-faq .section-top,
+.city-edition-journeys .section-top *,
+.city-local-service .section-top *,
+.city-local-faq .section-top *{opacity:1!important;visibility:visible!important;transform:none!important}
+/* Shorter, more deliberate rhythm without affecting the approved regional heroes. */
+.city-edition-journeys.section,.city-local-service.section,.city-local-faq.section{padding-block:clamp(58px,6vw,82px)}
+@media(max-width:760px){
+ .city-edition-journeys.section,.city-local-service.section,.city-local-faq.section{padding-block:44px}
+ .city-edition-journeys .section-top,.city-local-service .section-top,.city-local-faq .section-top{margin-bottom:24px}
+ .city-edition-journeys__grid h3{font-size:clamp(1.35rem,6vw,1.7rem)}
+ .city-edition-journeys__grid article{gap:12px}
+}
+
+/* Commercial experience replaces statistics in the regional landing funnels. */
+.regional-market--experience .regional-experience-card{display:flex;flex-direction:column;justify-content:center;gap:18px;background:#fff7e8;border:1px solid rgba(19,43,72,.12);border-radius:28px;padding:clamp(24px,3vw,40px)}
+.regional-market--experience .regional-experience-card h3{font-size:clamp(1.55rem,2.6vw,2.4rem);line-height:1.12;letter-spacing:-.035em;color:#132b48;margin:0;text-wrap:balance}
+.regional-market--experience .regional-experience-card p{margin:0;line-height:1.65;color:#40566b}
+.regional-market--experience .regional-experience-card a{font-weight:800;color:#a5005b;text-underline-offset:5px}
+@media(max-width:760px){.regional-market--experience .regional-experience-card{padding:24px;gap:14px}}

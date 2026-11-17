@@ -1,0 +1,23 @@
+/* Refinamento editorial Showbrinq 2027. Escopo: homepage, sem tocar no hero ou mapa. */
+#conteudo .sb-home{--sb-paper:#fffdf9;--sb-quiet:#f7f6f2;--home-polish-ink:#19313b}
+#conteudo .sb-home .home-audience-v2,#conteudo .sb-home .funnel-commercial,#conteudo .sb-home #quem-somos,#conteudo .sb-home .funnel-final{background:var(--sb-paper)}
+#conteudo .sb-home .funnel-meeting,#conteudo .sb-home .funnel-experience,#conteudo .sb-home .organizers-tribute{background:var(--sb-quiet)}
+#conteudo .sb-home .home-audience-v2 .container,#conteudo .sb-home .funnel-meeting .container,#conteudo .sb-home .funnel-commercial .container,#conteudo .sb-home #quem-somos .container,#conteudo .sb-home .funnel-final .container{max-width:1160px}
+#conteudo .sb-home .funnel-meeting,#conteudo .sb-home .funnel-commercial,#conteudo .sb-home #quem-somos,#conteudo .sb-home .funnel-final{padding-block:clamp(64px,7vw,108px)}
+#conteudo .sb-home .funnel-meeting h2,#conteudo .sb-home .funnel-commercial h2,#conteudo .sb-home #quem-somos h2,#conteudo .sb-home .funnel-final h2{color:var(--home-polish-ink);max-width:22ch;line-height:1.13;letter-spacing:-.025em;text-wrap:balance}
+#conteudo .sb-home .funnel-meeting p,#conteudo .sb-home .funnel-commercial p,#conteudo .sb-home #quem-somos p,#conteudo .sb-home .funnel-final p{max-width:62ch;line-height:1.75}
+#conteudo .sb-home .home-audience-grid{gap:clamp(18px,3vw,32px)}
+#conteudo .sb-home .home-audience-card{border:1px solid rgba(25,49,59,.1);box-shadow:0 12px 32px rgba(25,49,59,.045);padding:clamp(26px,3vw,42px)}
+#conteudo .sb-home .funnel-commercial figure{background:#f5f9fa;border:1px solid #e0e9eb;box-shadow:0 18px 42px rgba(25,49,59,.07);overflow:hidden}
+#conteudo .sb-home .funnel-commercial figure img{width:100%;height:auto;object-fit:contain}
+#conteudo .sb-home .funnel-commercial figcaption{font-size:.83rem;line-height:1.55;color:#52636b;margin-top:12px}
+#conteudo .sb-home .funnel-commercial .funnel-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+#conteudo .sb-home .funnel-experience .funnel-section-heading{padding-top:clamp(58px,6vw,90px);padding-bottom:22px}
+#conteudo .sb-home .funnel-experience .funnel-section-heading h2{max-width:22ch;text-wrap:balance}
+#conteudo .sb-home .funnel-final{border-top:1px solid #e8e7e1}
+#conteudo .sb-home .funnel-final>.container>h2{max-width:25ch;text-wrap:balance}
+#conteudo .sb-home .funnel-final .funnel-split{gap:clamp(18px,3vw,32px);margin-top:30px}
+#conteudo .sb-home .funnel-final .funnel-split article{background:#f7f7f4;border:1px solid #e5e8e5;border-radius:22px;padding:clamp(24px,3vw,38px)}
+#conteudo .sb-home .funnel-final .funnel-split article:first-child{background:#fff0f5;border-color:#f4dce6}
+#conteudo .sb-home .funnel-final .funnel-split h3{margin-top:0}
+@media(max-width:700px){#conteudo .sb-home .funnel-meeting,#conteudo .sb-home .funnel-commercial,#conteudo .sb-home #quem-somos,#conteudo .sb-home .funnel-final{padding-block:58px}#conteudo .sb-home .home-audience-card{padding:25px}#conteudo .sb-home .funnel-commercial .funnel-actions .btn{width:100%;justify-content:center}#conteudo .sb-home .funnel-final .funnel-split article{padding:26px}}

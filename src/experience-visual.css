@@ -1,0 +1,56 @@
+/* Legibility layer for the user-selected orange media section. */
+#conteudo #por-dentro.experience-section {
+  color: #112d3c;
+}
+
+#conteudo #por-dentro.experience-section h2,
+#conteudo #por-dentro.experience-section h2 em,
+#conteudo #por-dentro.experience-section .section-top > p,
+#conteudo #por-dentro.experience-section .experience-bottom .footnote,
+#conteudo #por-dentro.experience-section .experience-bottom .text-link {
+  color: #112d3c;
+}
+
+#conteudo #por-dentro.experience-section .eyebrow {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: #112d3c;
+  color: #f4ff61;
+}
+
+#conteudo #por-dentro.experience-section .experience-bottom .text-link {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+#conteudo #por-dentro.experience-section .clip-options button {
+  border-color: #112d3c;
+  background: #fff;
+  color: #112d3c;
+}
+
+#conteudo #por-dentro.experience-section .clip-options button.selected {
+  border-color: #112d3c;
+  background: #ffdf55;
+  color: #112d3c;
+}
+
+
+/* Preview edits dc437c3f: exact targets, leaving neighbouring player controls intact. */
+#conteudo #por-dentro.experience-section .experience-bottom > a.text-link {
+  color: #11213c;
+  background: #feffe0;
+  border-radius: 15px;
+  padding: 12px 19px 12px 14px;
+  display: inline-flex;
+}
+
+#conteudo #por-dentro.experience-section .event-video > .video-start {
+  padding: 8px 56px 8px 37px;
+  margin-top: 205px;
+}
+
+#conteudo #por-dentro.experience-section .event-photo-viewer > .photo-viewer-controls {
+  background: #c3469b;
+}

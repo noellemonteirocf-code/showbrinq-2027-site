@@ -1,0 +1,40 @@
+/* Individual supplied artwork stays independent from copy and controls. */
+.city-hero-chest{background:radial-gradient(ellipse at 80% 55%,#fff2cc80,transparent 54%),#fff8ef!important;padding-bottom:78px}
+.city-hero-chest::after{display:none}
+.city-hero-chest .city-local-hero-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:30px;padding-top:18px}
+.city-hero-chest .city-local-copy{position:relative;z-index:2;min-width:0}
+.city-hero-chest .city-local-copy h1{font-size:clamp(36px,4.2vw,58px);line-height:1.08;letter-spacing:-.045em;max-width:650px}
+.city-hero-chest .city-local-copy h1 em{color:#d00064}
+.city-hero-chest .city-entry-card{background:#fff9e9;border-color:#e6bd40}
+.city-hero-chest .city-local-actions{gap:12px}
+.regional-chest-scene{position:relative;isolation:isolate;min-width:0;margin:0;padding:12px 0 0;align-self:center}
+.regional-chest-scene__glow{position:absolute;z-index:-1;inset:20% 4% 8%;border-radius:44% 56% 42% 58%;background:linear-gradient(135deg,#ffe7ac99,#fbd9e999 58%,#c9f4ed80);transform:rotate(-8deg)}
+.regional-chest-scene>img{display:block;width:100%;height:auto;max-height:540px;object-fit:contain;filter:drop-shadow(0 16px 15px #62473215)}
+.regional-chest-scene figcaption{display:flex;align-items:center;justify-content:center;gap:12px;width:fit-content;max-width:100%;margin:8px auto 0;padding:13px 24px;background:#fffaf2;border:1px solid #eedcc1;border-radius:18px;color:#143747;font-size:14px;line-height:1.5;box-shadow:0 7px 20px #ad775010}
+.regional-chest-scene figcaption span{display:grid;gap:2px}
+.regional-chest-scene figcaption strong{font-size:17px}
+.regional-chest-scene figcaption svg{flex:none;color:#bd005c}
+.regional-hero-wave{position:absolute;bottom:-1px;left:0;width:100%;height:56px;pointer-events:none}
+.regional-chest-journeys .city-edition-journeys__grid article{position:relative;isolation:isolate;overflow:visible;padding-right:clamp(140px,15vw,190px);border-radius:30px}
+.regional-chest-journeys .city-edition-journeys__exhibitor{background:linear-gradient(120deg,#fff0f6,#ffe2ee)}
+.regional-chest-journeys .city-edition-journeys__buyer{background:linear-gradient(120deg,#e9fcfa,#c9f4ef)}
+.regional-chest-journeys .regional-journey-art{position:absolute;right:8px;top:40px;width:clamp(120px,13vw,165px);height:160px;object-fit:contain;z-index:-1;pointer-events:none}
+.regional-chest-journeys .city-edition-journeys__grid .btn{font-size:14px;max-width:100%}
+@media(max-width:900px){
+ .city-hero-chest .city-local-hero-grid{grid-template-columns:1fr;gap:18px}
+ .regional-chest-scene{width:min(100%,540px);justify-self:center}
+ .regional-chest-scene>img{max-height:440px}
+ .regional-chest-journeys .city-edition-journeys__grid{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+ .city-hero-chest{padding-bottom:58px}
+ .city-hero-chest .city-local-copy h1{font-size:clamp(34px,9vw,44px)}
+ .regional-chest-scene{padding:0}
+ .regional-chest-scene>img{max-height:350px}
+ .regional-chest-scene figcaption{font-size:13px;padding:10px 20px}
+ .regional-chest-scene figcaption strong{font-size:16px}
+ .regional-hero-wave{height:34px}
+ .regional-chest-journeys .city-edition-journeys__grid article{padding:24px;gap:14px}
+ .regional-chest-journeys .regional-journey-art{position:static;align-self:flex-end;width:135px;height:110px;z-index:auto;margin:0 0 -10px;order:0}
+ .regional-chest-journeys .city-edition-journeys__grid article>span{max-width:100%}
+}

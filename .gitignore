@@ -1,0 +1,21 @@
+node_modules/
+dist/
+.env
+.env.*
+*.log
+.DS_Store
+
+.local-platform/
+
+# Generated files and private local data
+dist-server/
+coverage/
+.cache/
+*.tsbuildinfo
+*.pem
+*.key
+*.p12
+*.pfx
+*.sqlite
+*.sqlite3
+*.db

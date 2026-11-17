@@ -1,0 +1,157 @@
+/* MN Eventos / Canva como referência de energia, não como cópia do layout. */
+.home-hero-v2 {
+  background: linear-gradient(118deg, #0079a5 0%, #0079a5 48%, #00a5df 76%, #10b6e4 100%);
+}
+.home-hero-v2::after {
+  z-index: 0;
+  width: 740px;
+  height: 740px;
+  top: -90px;
+  right: -90px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: #ed176b;
+  clip-path: polygon(50% 0%,59% 10%,72% 3%,78% 15%,93% 13%,92% 28%,100% 37%,91% 49%,98% 62%,85% 69%,89% 84%,74% 86%,66% 100%,53% 91%,41% 100%,33% 88%,18% 91%,18% 76%,3% 69%,11% 57%,0% 45%,12% 35%,7% 22%,23% 20%,29% 6%,42% 13%);
+  transform: rotate(-8deg);
+}
+.home-hero-v2 .new-hero-media { z-index: 2; }
+#conteudo .home-hero-v2 h1 { color: #fff; }
+#conteudo .home-hero-v2 h1 em { color: #ffe247; }
+#conteudo .home-hero-v2 .home-hero-lead { color: #fff; }
+.home-hero-v2 .tag { color: #0d536b; background: #fff; border: 2px solid #ffe247; }
+.home-hero-v2 .home-entry-note { background: #fff; border-color: #fff; border-left-color: #ffe247; box-shadow: 0 6px 0 #006589; }
+.home-hero-v2 .new-hero-calendar,
+.home-hero-v2 .new-hero-calendar > svg:first-child { color: #fff; }
+.home-hero-v2 .new-hero-actions .btn-primary { background: #ca0757; border: 2px solid #fff; box-shadow: 0 7px 0 #8f0340; }
+.home-hero-v2 .new-hero-actions .btn-outline { background: #fff; border: 2px solid #fff; color: #a30749; box-shadow: 0 7px 0 #006589; }
+.home-hero-v2 .hero-camera-frame { border: 9px solid #fff; box-shadow: 12px 15px 0 #ad0b4c, 0 24px 48px #0043634d; }
+.home-hero-v2 .hero-ticket { box-shadow: 0 8px 0 #0086ae; }
+.home-hero-v2 .toy-token { width: 76px; height: 76px; font-size: 45px; box-shadow: 0 8px 0 #a30c4a; }
+.home-hero-v2 .hero-confetti { z-index: 1; }
+.home-hero-v2 .hero-confetti span { opacity: .95; color: #fff4ac; }
+.home-hero-v2 .hero-confetti span:nth-child(3) { color: #ffe247; }
+.home-hero-v2 .hero-confetti span:nth-child(5) { bottom: 3%; left: 1%; }
+.home-color-ribbon { background: #c90758; padding: 20px 0; border-bottom: 5px solid #ffe247; }
+.home-color-ribbon span { font-size: 14px; letter-spacing: .06em; }
+.home-audience-v2 { background: #fff9ed; }
+.home-audience-card { overflow: visible; border: 3px solid #fff; border-radius: 25px; transition: transform .3s ease, box-shadow .3s ease; }
+.home-audience-buyer { background: #e0f8ff; box-shadow: 0 10px 0 #00a5df, 0 22px 34px #0479a514; }
+.home-audience-exhibitor { background: #ffecf4; box-shadow: 0 10px 0 #ed176b, 0 22px 34px #ad0b4c14; }
+.home-audience-card:hover { transform: translateY(-5px); }
+.home-audience-icon { width: 68px; height: 68px; top: -13px; right: 26px; border: 4px solid #fff; background: #ffe247; box-shadow: 0 7px 0 #00a5df; font-size: 38px; }
+.home-audience-exhibitor .home-audience-icon { background: #fff; box-shadow: 0 7px 0 #ed176b; }
+.home-audience-v2 .section-top { padding-bottom: 13px; }
+.home-audience-grid { gap: 30px; }
+.home-audience-buyer .btn-dark { background: #006f91; border-color: #006f91; }
+.home-audience-exhibitor .btn-primary { background: #ca0757; border-color: #ca0757; }
+.blog-hero { background: linear-gradient(115deg, #d9f8ff 0%, #d9f8ff 47%, #ffe0ed 80%, #fff0bd 100%); }
+.blog-hero-toys > span { box-shadow: 0 7px 0 #00a5df, 0 16px 25px #00658919; }
+.blog-hero-toys > span:nth-child(even) { box-shadow: 0 7px 0 #ed176b, 0 16px 25px #ac084b19; }
+.history-hero { background: linear-gradient(118deg, #0079a5 0%, #0079a5 48%, #00a5df 76%, #10b6e4 100%); }
+.history-hero::after { width: 170px; height: 170px; left: auto; right: -60px; bottom: -90px; }
+.history-source-card { background: #ca0757; }
+.history-final-cta { background: #0079a5; }
+.history-final-cta .btn-primary { background: #ca0757; }
+.history-teaser { background: linear-gradient(110deg, #0079a5 0 66%, #ca0757 66% 100%); }
+.history-teaser .eyebrow,
+.history-source-card .eyebrow { color: #fff; }
+
+@keyframes canva-toy-bob {
+  0%,100% { translate: 0 0; rotate: -6deg; }
+  50% { translate: 0 -10px; rotate: 4deg; }
+}
+@keyframes canva-star-turn {
+  0%,100% { rotate: -3deg; }
+  50% { rotate: 3deg; }
+}
+html[data-motion="on"] .home-audience-icon,
+html[data-motion="on"] .history-teaser-icon { animation: canva-toy-bob 5s ease-in-out infinite; }
+html[data-motion="on"] .home-audience-exhibitor .home-audience-icon { animation-delay: -.8s; }
+html[data-motion="on"] .home-hero-v2::after { animation: canva-star-turn 10s ease-in-out infinite; }
+html[data-motion="off"] .home-audience-icon,
+html[data-motion="off"] .history-teaser-icon,
+html[data-motion="off"] .home-hero-v2::after { animation: none !important; }
+
+/* Sete links no menu: usar menu completo em vez de comprimir a fonte. */
+@media (min-width: 851px) and (max-width: 1240px) {
+  .desktop-nav, .header-cta { display: none; }
+  .mobile-menu-toggle { display: flex; }
+  .mobile-nav { display: flex; position: absolute; top: 94px; left: 0; right: 0; flex-direction: column; padding: 15px 28px 24px; background: #fffdf7; border-bottom: 1px solid #dbe4e0; box-shadow: 0 20px 25px #122f3c13; max-height: calc(100dvh - 150px); overflow-y: auto; }
+  .mobile-nav > a { display: flex; align-items: center; justify-content: space-between; min-height: 48px; padding: 12px; border-bottom: 1px solid #e7ece5; font-size: 16px; }
+}
+@media (max-width: 850px) {
+  .mobile-nav { max-height: calc(100dvh - 150px); overflow-y: auto; }
+}
+@media (max-width: 680px) {
+  .home-hero-v2 { background: linear-gradient(180deg, #0079a5 0%, #0079a5 52%, #00a5df 100%); }
+  .home-hero-v2::after { top: auto; bottom: -70px; right: -100px; width: 570px; height: 570px; }
+  .home-hero-v2 .hero-camera-frame { border-width: 7px; box-shadow: 8px 11px 0 #ad0b4c, 0 18px 32px #00436340; }
+  .home-hero-v2 .toy-token { width: 59px; height: 59px; font-size: 33px; }
+  .home-hero-v2 .token-one { right: -3px; }
+  .home-hero-v2 .token-two { right: -2px; }
+  .home-hero-v2 .hero-confetti span:nth-child(5) { left: 1%; bottom: 2%; }
+  .home-color-ribbon span { font-size: 12px; }
+  .home-audience-grid { gap: 32px; }
+  .home-audience-card { padding: 26px 23px; }
+  .home-audience-icon { width: 56px; height: 56px; right: 20px; font-size: 30px; }
+  #conteudo .history-step-card p,
+  #conteudo .history-source-card p,
+  #conteudo .history-teaser p { font-size: 16px; }
+  .history-teaser { background: linear-gradient(155deg, #0079a5 0 68%, #ca0757 68% 100%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-audience-icon, .history-teaser-icon, .home-hero-v2::after { animation: none !important; }
+}
+@media print {
+  .home-hero-v2 { background: #fff; }
+  .home-hero-v2::after { display: none !important; }
+  #conteudo .home-hero-v2 h1, #conteudo .home-hero-v2 h1 em, #conteudo .home-hero-v2 .home-hero-lead { color: #111; }
+}
+
+@media (max-width: 680px) {
+  .home-hero-v2 .new-hero-actions .btn { flex: 1 1 145px; gap: 8px; padding: 12px 10px; font-size: 14px !important; white-space: nowrap; }
+  .home-hero-v2 .new-hero-actions .btn > svg { flex-shrink: 0; }
+  .mobile-bottom-nav.is-context-hidden { display: none; }
+}
+
+/* Texto sempre sobre uma base estável; ciano claro só na metade decorativa. */
+.home-hero-v2,
+.history-hero { background: linear-gradient(90deg, #0079a5 0 59%, #00a5df 59% 100%); }
+.desktop-nav > a.nav-audience-lojistas,
+.mobile-nav > a.nav-audience-lojistas { color: #00627a; }
+.history-contents strong { color: #006d91; }
+@media (max-width: 760px) {
+  .home-hero-v2,
+  .history-hero { background: #0079a5; }
+  .history-hero::before { top: auto; bottom: -80px; }
+}
+
+/* Prévia SHOWBRINQ: cor de fundo selecionada para a hero inicial. */
+@media screen {
+  #conteudo .home-hero-v2 {
+    background-color: #0281f2;
+    background-image: linear-gradient(90deg, #0281f2 0 59%, #00a5df 59% 100%);
+  }
+  #conteudo .home-hero-v2 h1 em {
+    color: #112d3c;
+    font-style: normal;
+    background: #ffe247;
+    border-radius: 6px;
+    padding: 0 .08em;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+  #conteudo .home-hero-v2 .home-hero-lead,
+  #conteudo .home-hero-v2 .new-hero-calendar,
+  #conteudo .home-hero-v2 .new-hero-calendar > svg:first-child {
+    color: #112d3c;
+  }
+}
+
+@media screen and (max-width: 680px) {
+  #conteudo .home-hero-v2 {
+    background-color: #0281f2;
+    background-image: linear-gradient(180deg, #0281f2 0 52%, #00a5df 52% 100%);
+  }
+}

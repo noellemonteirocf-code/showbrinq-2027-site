@@ -1,0 +1,21 @@
+/* Shared finishes: reuse the accessible blue already approved for Piracicaba. */
+[data-brand-preview].announcement,
+footer.site-footer[data-brand-preview]{background:#0944A9}
+[data-brand-preview].announcement a,
+footer.site-footer[data-brand-preview] :is(p,a,h4,span){color:#fff}
+.expo-feature-label{background:#c60060}
+.benefit-card .benefit-index{color:#63717b}
+.hb-eyebrow{color:#9f4233}
+.city-hero-local .breadcrumb,.city-hero-local .breadcrumb a{color:#47606d}
+.city-local-stamp > small{font-size:12px}
+#conteudo .expo-feature-label{background:#c60060}
+#conteudo .photo-viewer-controls{background:#a52e7e}
+#conteudo .history-visual-article .cms-article-hero .eyebrow{background:#c60060;font-size:12px}
+#conteudo .cms-public-article .cms-article-hero .eyebrow{font-size:12px}
+#conteudo .history-visual-article .cms-article-hero p:last-child{color:#47606d}
+#conteudo .history-visual-article .history-fair-photos figcaption{background:#00718b}
+.tool-save-box p{color:#47606d}
+.tool-city-option small{font-size:12px}
+.benefit-card .benefit-index{opacity:1}
+#conteudo .breadcrumb,#conteudo .breadcrumb a{color:#47606d}
+#conteudo #por-dentro.experience-section .event-photo-viewer > .photo-viewer-controls{background:#a52e7e}

@@ -1,0 +1,40 @@
+.circuit-plane-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.circuit-plane {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 50px;
+  max-width: 50px;
+  height: auto;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: none;
+  user-select: none;
+}
+
+.circuit-plane-layer.is-flying .circuit-plane {
+  top: var(--plane-y, 0%);
+  left: var(--plane-x, 0%);
+  opacity: var(--plane-opacity, 1);
+  visibility: visible;
+  transform: translate(-50%, -50%) rotate(var(--plane-angle, 0deg));
+  transform-origin: center;
+  will-change: top, left, opacity, transform;
+  filter: drop-shadow(0 2px 4px rgb(23 47 54 / 18%));
+}
+
+@media (max-width: 600px) {
+  .circuit-plane {
+    width: 38px;
+    max-width: 38px;
+  }
+}

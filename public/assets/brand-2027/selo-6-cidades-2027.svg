@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 510" role="img" aria-labelledby="title desc">
+<title id="title">6 cidades em 2027</title><desc id="desc">Selo tridimensional rosa com borda amarela e faixa amarela.</desc>
+<defs>
+ <linearGradient id="outer" x1=".1" y1=".05" x2=".8" y2="1"><stop stop-color="#fff45a"/><stop offset=".22" stop-color="#ffd000"/><stop offset=".65" stop-color="#f7a400"/><stop offset="1" stop-color="#b96806"/></linearGradient>
+ <radialGradient id="pink" cx=".3" cy=".18" r=".94"><stop stop-color="#ff7ca5"/><stop offset=".35" stop-color="#fe1a72"/><stop offset=".72" stop-color="#df005d"/><stop offset="1" stop-color="#a40051"/></radialGradient>
+ <linearGradient id="ribbon" x1=".12" y1="0" x2=".84" y2="1"><stop stop-color="#fff670"/><stop offset=".4" stop-color="#ffcf08"/><stop offset=".8" stop-color="#f9a500"/><stop offset="1" stop-color="#bf6f03"/></linearGradient>
+ <linearGradient id="white" x1="0" y1="0" x2=".65" y2="1"><stop stop-color="white"/><stop offset=".7" stop-color="#fff"/><stop offset="1" stop-color="#e5d5db"/></linearGradient>
+ <filter id="shadow" x="-25%" y="-25%" width="150%" height="160%"><feDropShadow dx="1" dy="19" stdDeviation="14" flood-color="#59213a" flood-opacity=".33"/></filter>
+ <filter id="typeShadow"><feDropShadow dx="1" dy="4" stdDeviation="2.5" flood-color="#6c0639" flood-opacity=".38"/></filter>
+ <filter id="ribbonShadow"><feDropShadow dx="0" dy="6" stdDeviation="4" flood-color="#840644" flood-opacity=".35"/></filter>
+ <path id="edge" d="M229 13 C271 7 291 39 329 52 C375 67 405 90 417 139 C426 178 455 203 446 250 C439 291 416 316 418 354 C420 392 382 425 340 432 C305 439 283 484 233 485 C186 488 158 449 119 439 C79 428 43 399 42 356 C40 314 11 284 15 244 C19 201 39 176 42 139 C46 94 79 65 119 55 C157 46 182 18 229 13Z"/>
+</defs>
+<g filter="url(#shadow)">
+ <use href="#edge" fill="#a76a04" transform="translate(0 9)"/>
+ <use href="#edge" fill="url(#outer)"/>
+ <use href="#edge" fill="none" stroke="#fff88c" stroke-width="5" transform="translate(0,-2)"/>
+ <path d="M231 38 C271 34 295 67 330 77 C372 90 394 122 398 155 C403 196 429 217 421 253 C416 293 394 322 391 359 C388 388 354 409 321 413 C288 420 268 457 230 458 C194 460 170 424 135 414 C97 404 69 380 69 346 C69 308 40 287 43 245 C45 212 68 191 67 154 C68 119 97 89 132 81 C170 73 189 40 231 38Z" fill="url(#pink)" stroke="#f998b4" stroke-width="4"/>
+ <path d="M78 176 C87 93 139 91 173 69 C216 40 257 58 287 77" fill="none" stroke="#fff" opacity=".42" stroke-linecap="round" stroke-width="12"/>
+</g>
+<g filter="url(#typeShadow)" font-family="Arial Rounded MT Bold, Arial, sans-serif" font-weight="900" text-anchor="middle" fill="url(#white)">
+ <text x="230" y="248" font-size="220" letter-spacing="-10">6</text>
+ <text x="230" y="326" font-size="70" letter-spacing="1">CIDADES</text>
+</g>
+<g fill="#ffcf20">
+ <path d="M84 219 l35 8 -31 12Z"/><path d="M111 190 l26 25 -34 -8Z"/>
+ <path d="M376 218 l-35 9 31 12Z"/><path d="M348 186 l-26 29 34 -12Z"/>
+</g>
+<g filter="url(#ribbonShadow)">
+ <path d="M78 353 Q230 319 383 349 L384 410 Q230 381 81 413Z" fill="#9c5905"/>
+ <path d="M76 346 Q228 315 386 346 Q391 378 377 403 Q227 373 82 406 Q67 378 76 346Z" fill="url(#ribbon)" stroke="#fff274" stroke-width="4"/>
+ <path d="M90 351 Q230 327 371 351" stroke="#fff9a3" stroke-width="7" fill="none" opacity=".55"/>
+</g>
+<text x="230" y="384" font-family="Arial Rounded MT Bold, Arial, sans-serif" font-weight="900" font-size="58" letter-spacing="-1" text-anchor="middle" fill="#12234c">EM 2027</text>
+</svg>

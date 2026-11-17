@@ -1,0 +1,64 @@
+/* Polimento de acabamento aplicado a todo o site.
+   Áreas de toque, legibilidade de etiquetas e enquadramento de peças 3D.
+   Sem alterar paleta, tipografia da marca, estrutura ou copy. */
+
+/* 1. Áreas de toque ampliadas por camada invisível: o desenho e o espaçamento
+   dos elementos permanecem exatamente como estão. */
+#conteudo .kit-edition-map-label,
+#conteudo .expo-selected > a,
+#conteudo .breadcrumb a,
+#conteudo .hero-photo-controls button,
+#conteudo .city-hero-local .breadcrumb a,
+#conteudo .contact-field-help a { position: relative; }
+
+#conteudo .kit-edition-map-label::after,
+#conteudo .expo-selected > a::after,
+#conteudo .breadcrumb a::after,
+#conteudo .city-hero-local .breadcrumb a::after,
+#conteudo .contact-field-help a::after {
+  content: '';
+  position: absolute;
+  inset: -11px -6px;
+}
+
+#conteudo .hero-photo-controls button::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+}
+
+#conteudo .hb-controls .hb-search input { padding-block: 10px; }
+
+/* Links de ação isolados das páginas de cidade: mesma ampliação, com folga
+   menor porque ficam empilhados. */
+#conteudo .regional-context-links a,
+#conteudo .regional-experience-card > a,
+#conteudo .city-edition-journeys__secondary { position: relative; }
+
+#conteudo .regional-context-links a::after,
+#conteudo .regional-experience-card > a::after,
+#conteudo .city-edition-journeys__secondary::after {
+  content: '';
+  position: absolute;
+  inset: -8px -6px;
+}
+
+/* 2. Etiquetas e legendas em telas estreitas: tamanho mínimo confortável,
+   mantendo caixa alta, espaçamento entre letras e cores da marca. */
+@media (max-width: 600px) {
+  #conteudo .tag,
+  #conteudo .expo-label,
+  #conteudo .eyebrow { font-size: 12.5px; line-height: 1.55; }
+  #conteudo figcaption,
+  #conteudo .expo-note { font-size: 13px; line-height: 1.5; }
+}
+
+/* 3. Credenciamento: a peça 3D do canto do card ficava cortada pela borda.
+   Recolhida para dentro, considerando o giro de 12 graus. */
+#conteudo .campaign-city-grid .campaign-notepad {
+  right: 12px;
+  bottom: 10px;
+  width: 84px;
+  height: 102px;
+}

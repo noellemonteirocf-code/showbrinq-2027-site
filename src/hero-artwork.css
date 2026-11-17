@@ -1,0 +1,165 @@
+/* Selective integration of the supplied SHOWBRINQ visual kit. */
+.home-hero-v2 .showbrinq-artwork {
+  --art-x: 0px;
+  --art-y: 0px;
+  perspective: 1200px;
+  isolation: isolate;
+}
+
+.home-hero-v2 .showbrinq-artwork .hero-camera-frame {
+  top: 25px;
+}
+
+.showbrinq-artwork .art-depth {
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  transform: translate3d(var(--art-x), var(--art-y), 0);
+  transition: transform 180ms ease-out;
+}
+
+.showbrinq-artwork .art-depth img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 8px 6px #10283b26);
+  user-select: none;
+}
+
+.showbrinq-artwork .art-plane {
+  width: 108px;
+  left: 4%;
+  top: -14px;
+}
+
+.showbrinq-artwork .art-heart {
+  width: 67px;
+  right: -8px;
+  top: 39%;
+  transform: translate3d(calc(var(--art-x) * -0.7), calc(var(--art-y) * -0.7), 0);
+}
+
+.showbrinq-artwork .art-face {
+  width: 111px;
+  right: -6px;
+  bottom: 131px;
+  transform: translate3d(calc(var(--art-x) * 0.5), calc(var(--art-y) * 0.5), 0);
+}
+
+.showbrinq-artwork .art-face-button {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+
+.showbrinq-artwork .art-face-button:focus-visible {
+  outline: 3px solid #112d3c;
+  outline-offset: 5px;
+  box-shadow: 0 0 0 7px #fff;
+}
+
+.showbrinq-artwork[data-art-motion="on"] .art-plane img {
+  animation: artwork-float 7s ease-in-out infinite;
+}
+
+.showbrinq-artwork[data-art-motion="on"] .art-heart img {
+  animation: artwork-float 8s ease-in-out -2s infinite;
+}
+
+.showbrinq-artwork[data-art-motion="on"] .art-face-button:hover img {
+  transform: rotate(-5deg) scale(1.04);
+}
+
+.showbrinq-artwork[data-art-motion="on"] .art-face .art-pop {
+  animation: artwork-pop 650ms ease-out;
+}
+
+.showbrinq-artwork .art-burst {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.showbrinq-artwork .art-burst i {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  width: 7px;
+  height: 9px;
+  border-radius: 2px;
+  background: var(--burst-color);
+  animation: artwork-confetti 900ms ease-out forwards;
+}
+
+/* Paper detail only: retain all entry information and its current text size. */
+#conteudo .home-hero-v2 .home-entry-note {
+  position: relative;
+  border-radius: 5px 14px 5px 14px;
+  box-shadow: 4px 5px 0 #fff3c6, 7px 9px 0 #112d3c29;
+}
+
+.home-hero-v2 .home-entry-note::after {
+  content: "";
+  position: absolute;
+  top: -8px;
+  right: 24px;
+  width: 54px;
+  height: 16px;
+  background: #ffdf4dc9;
+  border: 1px solid #ffe78b;
+  transform: rotate(4deg);
+  pointer-events: none;
+}
+
+@keyframes artwork-float {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-7px) rotate(3deg); }
+}
+
+@keyframes artwork-pop {
+  0%, 100% { transform: scale(1) rotate(0); }
+  35% { transform: translateY(-9px) scale(1.09) rotate(-7deg); }
+  70% { transform: scale(0.98) rotate(3deg); }
+}
+
+@keyframes artwork-confetti {
+  from { transform: translate(0, 0) rotate(0); opacity: 1; }
+  to { transform: translate(var(--burst-x), var(--burst-y)) rotate(var(--burst-turn)); opacity: 0; }
+}
+
+@media (max-width: 640px) {
+  .showbrinq-artwork .art-plane { width: 80px; left: 2%; top: -6px; }
+  .showbrinq-artwork .art-heart { display: none; }
+  .showbrinq-artwork .art-face { width: 85px; right: 0; bottom: 133px; }
+}
+
+html[data-motion="off"] .showbrinq-artwork .art-depth,
+.showbrinq-artwork[data-art-motion="off"] .art-depth {
+  transform: none;
+  transition: none;
+}
+
+html[data-motion="off"] .showbrinq-artwork .art-depth img {
+  transform: none !important;
+  animation: none !important;
+}
+
+html[data-motion="off"] .showbrinq-artwork .art-burst {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .showbrinq-artwork .art-depth,
+  .showbrinq-artwork .art-depth img {
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+  .showbrinq-artwork .art-burst { display: none; }
+}

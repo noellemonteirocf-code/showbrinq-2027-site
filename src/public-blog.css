@@ -1,0 +1,64 @@
+.public-article-card { display: grid; grid-template-columns: minmax(210px, .75fr) 1.25fr; align-items: stretch; gap: clamp(24px, 4vw, 52px); margin: 24px 0 38px; padding: clamp(22px, 4vw, 42px); border: 1px solid #cce5e8; border-radius: 26px; background: #fff; box-shadow: 0 9px 0 #f9d93d, 0 20px 50px #0c3b4d12; }
+.public-article-art { position: relative; display: grid; min-height: 225px; place-items: center; overflow: hidden; border: 4px solid #fff; border-radius: 20px 20px 45px 20px; background: linear-gradient(140deg, #04a8d3, #9feaf1 62%, #ffe554); box-shadow: 7px 8px 0 #d60b62; }
+.public-article-art::before, .public-article-art::after { position: absolute; content: ''; border-radius: 50%; }
+.public-article-art::before { width: 195px; height: 195px; left: -40px; top: -75px; background: #f01874; opacity: .9; }
+.public-article-art::after { width: 160px; height: 160px; right: -55px; bottom: -70px; background: #ffdf42; }
+.public-article-art span { position: absolute; z-index: 1; display: grid; width: 67px; height: 67px; place-items: center; border: 3px solid #fff; border-radius: 20px; background: #fff; box-shadow: 0 6px 0 #0d5369; font-size: 35px; }
+.public-article-art span:nth-child(1) { left: 17%; top: 23%; rotate: -9deg; }
+.public-article-art span:nth-child(2) { right: 16%; top: 18%; rotate: 8deg; }
+.public-article-art span:nth-child(3) { left: 43%; bottom: 14%; rotate: -3deg; }
+.public-article-label { display: inline-flex; align-items: center; gap: 7px; color: #076c86; font-size: 13px; font-weight: 900; letter-spacing: .09em; }
+.public-article-copy h2 { margin: 13px 0 15px; color: #143847; font-size: clamp(28px, 3.2vw, 39px); line-height: 1.12; }
+.public-article-copy > p { margin: 0; color: #435e68; font-size: 18px; line-height: 1.7; }
+.public-article-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; margin-top: 23px; }
+.public-article-source, .public-blog-link { display: inline-flex; align-items: center; gap: 7px; color: #9f0649; font-size: 15px; font-weight: 850; text-underline-offset: 4px; }
+.public-article-source:hover, .public-blog-link:hover { text-decoration: underline; }
+.public-article-card-compact { grid-template-columns: minmax(155px, .34fr) 1fr; gap: 28px; margin: 28px 0; padding: 23px; border-radius: 19px; }
+.public-article-card-compact .public-article-art { min-height: 165px; }
+.public-article-card-compact .public-article-art span { width: 53px; height: 53px; border-radius: 16px; font-size: 28px; }
+.public-article-card-compact .public-article-copy h2 { font-size: clamp(24px, 2.6vw, 31px); }
+.public-article-card-compact .public-article-copy > p { font-size: 16px; }
+.public-article-card-compact .public-article-source { display: none; }
+.public-blog-coming { display: flex; align-items: center; gap: 16px; padding: 18px 22px; border-radius: 14px; background: #e9f8fb; color: #214955; }
+.public-blog-coming-icon { display: grid; width: 43px; height: 43px; flex: 0 0 auto; place-items: center; border-radius: 14px; background: #ffdf42; color: #174454; }
+.public-blog-coming p { flex: 1; margin: 0; font-size: 16px; line-height: 1.55; }
+.public-blog-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 24px; }
+.public-blog-heading h2, .public-upcoming-heading h2 { margin: 8px 0 0; color: #123947; font-size: clamp(30px, 4vw, 44px); line-height: 1.12; }
+.public-blog-heading > p { max-width: 390px; margin: 0 0 3px; color: #49636d; font-size: 17px; line-height: 1.65; }
+.public-upcoming { margin: 62px 0 48px; padding: clamp(23px, 4vw, 40px); border-radius: 24px; background: linear-gradient(124deg, #fff4d1, #fff 46%, #e9f8fb); }
+.public-upcoming-heading { max-width: 690px; margin-bottom: 24px; }
+.public-upcoming-heading > p { margin: 13px 0 0; color: #49636d; font-size: 17px; line-height: 1.65; }
+.public-upcoming-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.public-upcoming-card { display: flex; align-items: flex-start; gap: 14px; padding: 19px; border: 1px solid #d8e8e9; border-radius: 16px; background: #fff; }
+.public-upcoming-card > span { display: grid; width: 42px; height: 42px; flex: 0 0 auto; place-items: center; border-radius: 13px; background: #dff6fb; font-size: 23px; }
+.public-upcoming-card h3 { margin: 0 0 6px; color: #153d4b; font-size: 19px; line-height: 1.3; }
+.public-upcoming-card p { margin: 0; color: #506872; font-size: 16px; line-height: 1.55; }
+.public-blog-cta { display: flex; justify-content: space-between; align-items: center; gap: 28px; margin-top: 32px; padding: 28px; border-radius: 20px; background: #0766ff; color: #fff; }
+.public-blog-cta .eyebrow { color: #fff3a5; }
+.public-blog-cta h2 { margin: 7px 0; color: #f4c648; font-size: clamp(26px, 3.5vw, 36px); }
+.public-blog-cta p { margin: 0; color: #e7f6f8; font-size: 16px; }
+.public-blog-cta > div:last-child { display: flex; flex-wrap: wrap; gap: 12px; }
+.public-blog-cta .btn-outline { border-color: #fff; background: #fff; color: #a4084b; }
+.public-blog-hero .blog-hero-inner { align-items: center; }
+.public-blog-hero .blog-hero-inner > div:first-child { max-width: 790px; }
+.public-blog-hero h1 { max-width: 780px; font-size: clamp(38px, 5vw, 62px); }
+.public-blog-hero p { max-width: 660px; font-size: 19px; line-height: 1.65; }
+.public-blog-page .blog-hero-toys span { animation-duration: 4.5s; }
+@media (max-width: 760px) {
+  .public-article-card, .public-article-card-compact { grid-template-columns: 1fr; gap: 22px; padding: 18px; }
+  .public-article-art, .public-article-card-compact .public-article-art { min-height: 190px; }
+  .public-article-copy h2 { font-size: 28px; }
+  .public-article-copy > p { font-size: 17px; }
+  .public-article-actions { align-items: stretch; flex-direction: column; gap: 14px; }
+  .public-blog-coming { align-items: flex-start; flex-wrap: wrap; }
+  .public-blog-coming p { flex-basis: calc(100% - 65px); }
+  .public-blog-coming .public-blog-link { margin-left: 58px; }
+  .public-blog-heading { align-items: flex-start; flex-direction: column; gap: 12px; }
+  .public-upcoming-grid { grid-template-columns: 1fr; }
+  .public-blog-cta { align-items: stretch; flex-direction: column; }
+  .public-blog-cta > div:last-child { flex-direction: column; }
+  .public-blog-cta .btn { justify-content: center; }
+  .public-blog-hero h1 { font-size: clamp(35px, 9vw, 47px); }
+  .public-blog-hero p { font-size: 17px; }
+}
+@media (prefers-reduced-motion: reduce) { .public-blog-page .blog-hero-toys span { animation: none !important; transition: none !important; } }
