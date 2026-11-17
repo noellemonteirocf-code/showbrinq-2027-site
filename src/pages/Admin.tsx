@@ -299,7 +299,16 @@ function AccessScreen({
   );
 }
 
-function StatusBadge({ status }: { status: BlogPost['status'] }) {
+/** A published article whose publication date is still in the future is scheduled, not live. */
+function isScheduled(post: Pick<BlogPost, 'status' | 'publishedAt'> | null | undefined): boolean {
+  return Boolean(post && post.status === 'published' && post.publishedAt && Date.parse(post.publishedAt) > Date.now());
+}
+function formatSchedule(iso: string | null): string {
+  if (!iso) return '';
+  return new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+function StatusBadge({ status, scheduled = false }: { status: BlogPost['status']; scheduled?: boolean }) {
+  if (scheduled) return <span className="sb-status-badge is-scheduled"><span />Agendado</span>;
   return <span className={`sb-status-badge ${status === 'published' ? 'is-published' : 'is-draft'}`}><span />{status === 'published' ? 'Publicado' : 'Rascunho'}</span>;
 }
 
@@ -371,6 +380,7 @@ export default function Admin() {
   const [slugEdited, setSlugEdited] = useState(false);
   const [formError, setFormError] = useState('');
   const [formNotice, setFormNotice] = useState('');
+  const [scheduleAt, setScheduleAt] = useState('');
   const [conflict, setConflict] = useState(false);
   const [saveBusy, setSaveBusy] = useState(false);
   const [uploadBusy, setUploadBusy] = useState(false);
@@ -617,7 +627,7 @@ export default function Admin() {
     return saveFields();
   }, [activePost, isDirty, saveFields]);
 
-  const handlePublish = useCallback(async () => {
+  const handlePublish = useCallback(async (publishAt?: string) => {
     if (!fields.title.trim()) { setFormError('Informe o título antes de publicar.'); return; }
     if (!fields.slug.trim()) { setFormError('Informe o endereço (slug) antes de publicar.'); return; }
     if (!fields.excerpt.trim()) { setFormError('Escreva o resumo antes de publicar.'); return; }
@@ -629,20 +639,25 @@ export default function Admin() {
       post = await saveFields();
       if (!post) return;
     }
-    if (post.status === 'published') return;
-    if (!window.confirm('Este artigo ficará disponível no Blog da SHOWBRINQ. Deseja publicar agora?')) return;
+    if (post.status === 'published' && !isScheduled(post)) return;
+    if (publishAt) {
+      const at = Date.parse(publishAt);
+      if (!Number.isFinite(at) || at < Date.now() + 60_000) { setFormError('Escolha uma data e hora pelo menos 1 minuto à frente para agendar.'); return; }
+      if (!window.confirm(`O artigo será publicado automaticamente em ${formatSchedule(publishAt)}. Até lá, ele fica fora do Blog. Confirmar agendamento?`)) return;
+    } else if (!window.confirm('Este artigo ficará disponível no Blog da SHOWBRINQ. Deseja publicar agora?')) return;
     if (access.kind !== 'authorized') return;
     setSaveBusy(true);
     setFormError('');
     setFormNotice('');
     try {
-      const { post: published } = await publishAdminPost(post.id, post.revision, access.session.csrfToken);
+      const { post: published } = await publishAdminPost(post.id, post.revision, access.session.csrfToken, publishAt);
       const publishedFields = fieldsFromPost(published);
       setActivePost(published);
       setFields(publishedFields);
       setBaseline(publishedFields);
       replacePostInList(published);
-      setFormNotice('Artigo publicado no Blog.');
+      setFormNotice(publishAt ? `Publicação agendada para ${formatSchedule(published.publishedAt)}.` : 'Artigo publicado no Blog.');
+      setScheduleAt('');
     } catch (error) {
       if (isAuthError(error)) handleAuthFailure(error);
       else if (error instanceof CmsApiError && error.status === 409) {
@@ -731,7 +746,8 @@ export default function Admin() {
   }
 
   const isEditor = route.kind === 'new' || route.kind === 'edit' || route.kind === 'invalid';
-  const publishButtonVisible = !activePost || activePost.status === 'draft';
+  const activeScheduled = isScheduled(activePost);
+  const publishButtonVisible = !activePost || activePost.status === 'draft' || activeScheduled;
   const updateTitle = (value: string) => {
     setFields((current) => ({ ...current, title: value, ...(!activePost && !slugEdited ? { slug: slugFromTitle(value) } : {}) }));
     setFormError('');
@@ -788,7 +804,7 @@ export default function Admin() {
                   <div className="sb-post-list">
                     {filteredPosts.map((post) => <article className="sb-post-row" key={post.id}>
                       <div className="sb-post-thumb">{post.coverUrl ? <img src={post.coverUrl} alt="" /> : <span><ImagePlus size={22} /></span>}</div>
-                      <div className="sb-post-summary"><div className="sb-post-title-line"><h3>{post.title || 'Artigo sem título'}</h3><StatusBadge status={post.status} /></div><p>{post.excerpt || 'Sem resumo'}</p><div className="sb-post-meta"><span>{post.category || 'Sem categoria'}</span><span className="sb-meta-dot" aria-hidden="true" /><span><CalendarDays size={14} /> Atualizado em {displayDate(post.updatedAt)}</span></div></div>
+                      <div className="sb-post-summary"><div className="sb-post-title-line"><h3>{post.title || 'Artigo sem título'}</h3><StatusBadge status={post.status} scheduled={isScheduled(post)} /></div><p>{post.excerpt || 'Sem resumo'}</p><div className="sb-post-meta"><span>{post.category || 'Sem categoria'}</span><span className="sb-meta-dot" aria-hidden="true" /><span><CalendarDays size={14} /> Atualizado em {displayDate(post.updatedAt)}</span></div></div>
                       <button className="sb-button sb-button-row" type="button" onClick={() => navigateAdmin(routeForId(post.id))}><Edit3 size={17} /> Editar</button>
                     </article>)}
                   </div>
@@ -828,12 +844,13 @@ export default function Admin() {
 
                     <aside className="sb-editor-side-column" aria-label="Opções de publicação">
                       <section className="sb-form-card sb-publish-card"><div className="sb-form-card-heading"><div><span className="sb-section-icon is-green"><Globe2 size={18} /></span><div><h2>Publicação</h2><p>Você decide quando o artigo vai ao ar.</p></div></div></div>
-                        <div className="sb-publication-state">{activePost ? <><StatusBadge status={activePost.status} /><span>{activePost.status === 'published' ? 'Visível no Blog' : 'Somente no painel'}</span></> : <><StatusBadge status="draft" /><span>Começa como rascunho</span></>}</div>
+                        <div className="sb-publication-state">{activePost ? <><StatusBadge status={activePost.status} scheduled={activeScheduled} /><span>{activeScheduled ? `Vai ao ar em ${formatSchedule(activePost.publishedAt)}` : activePost.status === 'published' ? 'Visível no Blog' : 'Somente no painel'}</span></> : <><StatusBadge status="draft" /><span>Começa como rascunho</span></>}</div>
                         <div className="sb-publish-actions"><button className="sb-button sb-button-primary sb-button-wide" type="button" disabled={saveBusy || uploadBusy} onClick={() => void saveCurrent()}><Save size={17} />{saveBusy ? 'Salvando…' : activePost?.status === 'published' ? 'Salvar alterações' : 'Salvar rascunho'}</button>
-                          {publishButtonVisible && <button className="sb-button sb-button-publish sb-button-wide" type="button" disabled={saveBusy || uploadBusy} onClick={() => void handlePublish()}><Globe2 size={17} /> Publicar</button>}
-                          {activePost?.status === 'published' && <button className="sb-button sb-button-unpublish sb-button-wide" type="button" disabled={saveBusy || uploadBusy} onClick={() => void handleUnpublish()}><X size={17} /> Retirar do ar</button>}
+                          {publishButtonVisible && <button className="sb-button sb-button-publish sb-button-wide" type="button" disabled={saveBusy || uploadBusy} onClick={() => void handlePublish()}><Globe2 size={17} /> {activeScheduled ? 'Publicar agora' : 'Publicar'}</button>}
+                          {publishButtonVisible && <div className="sb-schedule"><label htmlFor="sb-schedule-at"><CalendarDays size={16} /> {activeScheduled ? 'Mudar o agendamento' : 'Ou agende a publicação'}</label><input id="sb-schedule-at" type="datetime-local" value={scheduleAt} onChange={(event) => setScheduleAt(event.target.value)} /><button className="sb-button sb-button-secondary sb-button-wide" type="button" disabled={saveBusy || uploadBusy || !scheduleAt} onClick={() => void handlePublish(new Date(scheduleAt).toISOString())}><Clock3 size={17} /> Agendar</button></div>}
+                          {activePost?.status === 'published' && <button className="sb-button sb-button-unpublish sb-button-wide" type="button" disabled={saveBusy || uploadBusy} onClick={() => void handleUnpublish()}><X size={17} /> {activeScheduled ? 'Cancelar agendamento' : 'Retirar do ar'}</button>}
                         </div>
-                        <div className="sb-save-note"><CheckCircle2 size={16} /><span>Nenhuma publicação é automática. Você confirma cada mudança.</span></div>
+                        <div className="sb-save-note"><CheckCircle2 size={16} /><span>Nada vai ao ar sem a sua confirmação. Artigos agendados são publicados sozinhos na data escolhida.</span></div>
                       </section>
 
                       <section className="sb-form-card sb-featured-card"><div><span className="sb-section-icon is-yellow"><Star size={18} /></span><div><h2>Destaque na página inicial</h2><p>Marque para sinalizar este artigo como destaque.</p></div></div><label className="sb-switch"><input type="checkbox" checked={fields.featured} onChange={(event) => setField('featured', event.target.checked)} aria-label="Destacar artigo na página inicial" /><span className="sb-switch-track" /><span className="sb-sr-only">Destacar na página inicial</span></label></section>

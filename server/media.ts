@@ -124,7 +124,7 @@ publicMediaRouter.get('/media/:id', async (req: Request, res: Response) => {
       `SELECT m.id, m.object_key, m.mime_type, m.byte_size, m.owner_open_id
        FROM cms_media m
        INNER JOIN cms_posts p ON p.cover_url = CONCAT('/api/admin/media/', m.id)
-       WHERE m.id = ? AND p.status = 'published' LIMIT 1`,
+       WHERE m.id = ? AND p.status = 'published' AND p.published_at <= CURRENT_TIMESTAMP(3) LIMIT 1`,
       [id],
     );
     if (!rows.length) { safeError(res, 404, 'Imagem não encontrada.', 'not_found'); return; }

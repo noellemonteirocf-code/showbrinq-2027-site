@@ -15,6 +15,8 @@ interface PostRow extends RowDataPacket {
   id: number; title: string; slug: string; excerpt: string; category: string; cover_url: string; cover_alt: string;
   body_html: string; seo_title: string; seo_description: string; featured: number | boolean; status: 'draft' | 'published';
   revision: number; created_at: Date | string; updated_at: Date | string; published_at: Date | string | null;
+  // Seconds from the database clock until published_at; keeps scheduling independent of time zones.
+  publish_in_seconds?: number | string | null;
 }
 interface MediaOwnershipRow extends RowDataPacket { id: number; }
 interface IdParams { id: string; }
@@ -41,21 +43,24 @@ function mapPost(row: PostRow, publicView = false): BlogPost {
     coverUrl, coverAlt: row.cover_alt, bodyHtml: row.body_html, seoTitle: row.seo_title,
     seoDescription: row.seo_description, featured: Boolean(row.featured), status: row.status,
     revision: Number(row.revision), createdAt: asIso(row.created_at) ?? new Date(0).toISOString(),
-    updatedAt: asIso(row.updated_at) ?? new Date(0).toISOString(), publishedAt: asIso(row.published_at),
+    updatedAt: asIso(row.updated_at) ?? new Date(0).toISOString(),
+    publishedAt: row.publish_in_seconds !== null && row.publish_in_seconds !== undefined && row.published_at !== null
+      ? new Date(Date.now() + Number(row.publish_in_seconds) * 1000).toISOString()
+      : asIso(row.published_at),
   };
 }
 
-const selectColumns = 'id, title, slug, excerpt, category, cover_url, cover_alt, body_html, seo_title, seo_description, featured, status, revision, created_at, updated_at, published_at';
+const selectColumns = 'id, title, slug, excerpt, category, cover_url, cover_alt, body_html, seo_title, seo_description, featured, status, revision, created_at, updated_at, published_at, TIMESTAMPDIFF(SECOND, CURRENT_TIMESTAMP(3), published_at) AS publish_in_seconds';
 
 /** Public read API; status is constrained in SQL, never accept client-selected public rows. */
 export async function listPublishedPosts(): Promise<BlogPost[]> {
-  const [rows] = await getDbPool().execute<PostRow[]>(`SELECT ${selectColumns} FROM cms_posts WHERE status = 'published' ORDER BY featured DESC, published_at DESC, id DESC`);
+  const [rows] = await getDbPool().execute<PostRow[]>(`SELECT ${selectColumns} FROM cms_posts WHERE status = 'published' AND published_at <= CURRENT_TIMESTAMP(3) ORDER BY featured DESC, published_at DESC, id DESC`);
   return rows.map(row => mapPost(row, true));
 }
 
 export async function findPublishedPost(slug: string): Promise<BlogPost | null> {
   if (typeof slug !== 'string' || slug.length > 160) return null;
-  const [rows] = await getDbPool().execute<PostRow[]>(`SELECT ${selectColumns} FROM cms_posts WHERE status = 'published' AND slug = ? LIMIT 1`, [slug]);
+  const [rows] = await getDbPool().execute<PostRow[]>(`SELECT ${selectColumns} FROM cms_posts WHERE status = 'published' AND published_at <= CURRENT_TIMESTAMP(3) AND slug = ? LIMIT 1`, [slug]);
   return rows.length ? mapPost(rows[0], true) : null;
 }
 
@@ -163,7 +168,28 @@ adminPostsRouter.put('/:id', requireCsrf, asyncRoute(async (req, res) => {
   }
 }));
 
+const MAX_SCHEDULE_SECONDS = 366 * 24 * 60 * 60;
+/** Optional publishAt (ISO 8601) turns a publish into a scheduled publish; returns seconds from now or null. */
+function parseSchedule(body: unknown): { ok: true; seconds: number | null } | { ok: false } {
+  const record = body && typeof body === 'object' && !Array.isArray(body) ? body as Record<string, unknown> : {};
+  if (record.publishAt === undefined || record.publishAt === null || record.publishAt === '') return { ok: true, seconds: null };
+  if (typeof record.publishAt !== 'string' || record.publishAt.length > 40) return { ok: false };
+  const at = Date.parse(record.publishAt);
+  if (!Number.isFinite(at)) return { ok: false };
+  const seconds = Math.round((at - Date.now()) / 1000);
+  if (seconds < 60 || seconds > MAX_SCHEDULE_SECONDS) return { ok: false };
+  return { ok: true, seconds };
+}
+function revisionOnly(body: unknown): unknown {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return body;
+  const { publishAt: _ignored, ...rest } = body as Record<string, unknown>;
+  return rest;
+}
+
 async function changePublication(idRaw: string, body: unknown, publish: boolean, res: Response): Promise<void> {
+  const schedule = publish ? parseSchedule(body) : { ok: true as const, seconds: null };
+  if (!schedule.ok) { res.status(400).json({ error: 'Escolha uma data e hora de agendamento entre 1 minuto e 1 ano a partir de agora.', code: 'invalid_schedule' }); return; }
+  body = revisionOnly(body);
   const id = parseId(idRaw);
   if (!id) { res.status(400).json({ error: 'Identificador inválido.', code: 'invalid_id' }); return; }
   const revision = parseRevision(body);
@@ -180,9 +206,14 @@ async function changePublication(idRaw: string, body: unknown, publish: boolean,
   const publishFields = publish ? applyPublishSeoFallback(fields) : fields;
   const [result] = await getDbPool().execute<ResultSetHeader>(
     publish
-      ? `UPDATE cms_posts SET seo_title = ?, seo_description = ?, status = 'published', published_at = COALESCE(published_at, CURRENT_TIMESTAMP(3)), revision = revision + 1, updated_at = CURRENT_TIMESTAMP(3) WHERE id = ? AND revision = ?`
+      ? schedule.seconds !== null
+        ? `UPDATE cms_posts SET seo_title = ?, seo_description = ?, status = 'published', published_at = TIMESTAMPADD(SECOND, ?, CURRENT_TIMESTAMP(3)), revision = revision + 1, updated_at = CURRENT_TIMESTAMP(3) WHERE id = ? AND revision = ?`
+        // Publish now: keep an earlier publication date, but bring a future (scheduled) date forward to now.
+        : `UPDATE cms_posts SET seo_title = ?, seo_description = ?, status = 'published', published_at = CASE WHEN published_at IS NULL OR published_at > CURRENT_TIMESTAMP(3) THEN CURRENT_TIMESTAMP(3) ELSE published_at END, revision = revision + 1, updated_at = CURRENT_TIMESTAMP(3) WHERE id = ? AND revision = ?`
       : `UPDATE cms_posts SET status = 'draft', published_at = NULL, revision = revision + 1, updated_at = CURRENT_TIMESTAMP(3) WHERE id = ? AND revision = ?`,
-    publish ? [publishFields.seoTitle, publishFields.seoDescription, id, revision] : [id, revision],
+    publish
+      ? schedule.seconds !== null ? [publishFields.seoTitle, publishFields.seoDescription, schedule.seconds, id, revision] : [publishFields.seoTitle, publishFields.seoDescription, id, revision]
+      : [id, revision],
   );
   if (!result.affectedRows) { res.status(409).json({ error: 'O artigo foi alterado em outra sessão. Atualize antes de continuar.', code: 'revision_conflict' }); return; }
   const [updated] = await getDbPool().execute<PostRow[]>(`SELECT ${selectColumns} FROM cms_posts WHERE id = ?`, [id]);

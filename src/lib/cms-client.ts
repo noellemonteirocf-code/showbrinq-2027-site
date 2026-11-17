@@ -105,11 +105,12 @@ export function uploadAdminCover(file: File, csrfToken?: string): Promise<Upload
   });
 }
 
-export function publishAdminPost(id: number, revision: number, csrfToken?: string): Promise<{ post: BlogPost }> {
+/** publishAt (ISO 8601) schedules the publication; without it the article goes live now. */
+export function publishAdminPost(id: number, revision: number, csrfToken?: string, publishAt?: string): Promise<{ post: BlogPost }> {
   return request<{ post: BlogPost }>(`/posts/${encodeURIComponent(String(id))}/publish`, {
     method: 'POST',
     headers: jsonHeaders(csrfToken),
-    body: JSON.stringify({ revision }),
+    body: JSON.stringify(publishAt ? { revision, publishAt } : { revision }),
   });
 }
 
