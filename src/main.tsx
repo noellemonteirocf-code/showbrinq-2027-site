@@ -18,6 +18,7 @@ import HotelsPage from './pages/Hotels';
 import Exhibitors2026Page from './components/HistoricalBrands';
 import { EditionPage, RecordsPage, PrivacyPage, NotFound } from './pages/Other';
 import { editions } from './data';
+import { registerAgentTools } from './agent-tools';
 import './styles.css';
 import './theme.css';
 import './blog.css';
@@ -181,3 +182,4 @@ function App() {
 // Keep native restoration from overriding the route's committed scroll position.
 if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
 createRoot(document.getElementById('root')!).render(<React.StrictMode><App/></React.StrictMode>);
+registerAgentTools();

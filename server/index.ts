@@ -13,6 +13,8 @@ import { adminMediaRouter, publicMediaRouter } from './media';
 import { databaseReady } from './db';
 import { renderBlogHtml, type PublicBootstrap } from './render-blog';
 import { publishedOrigin } from './origins';
+import { stat } from 'node:fs/promises';
+import { canonicalTag, fallbackHtml, linkHeader, llmsTxt, pageContentFor, pageMarkdown, structuredData } from './agent-ready';
 
 const app = express();
 const httpServer = createServer(app);
@@ -21,8 +23,8 @@ const root = process.cwd();
 // Hostinger (and similar hosts) may hand over a numeric port or a socket/pipe path in PORT.
 const rawPort = (process.env.PORT ?? '').trim();
 const listenTarget: number | string = /^\d+$/.test(rawPort) ? Number(rawPort) : rawPort || 3000;
-// Indexing stays off unless explicitly enabled after the organization approves publication.
-const indexingEnabled = process.env.SITE_INDEXING === 'on';
+// Publication approved on 2026-11-17: indexing is on unless SITE_INDEXING=off is set.
+const indexingEnabled = process.env.SITE_INDEXING !== 'off';
 const publicRobots = indexingEnabled ? 'index, follow' : 'noindex, nofollow';
 app.disable('x-powered-by');
 app.use(cookieParser());
@@ -70,6 +72,9 @@ app.use('/api', (_req,res) => {res.status(404).json({error:'Endpoint não encont
 
 let transformHtml: (url:string,source:string) => Promise<string> = async (_url,source) => source;
 let template = '';
+let buildDate = new Date().toISOString().slice(0,10);
+const wantsMarkdown = (req:Request) => req.accepts(['text/html','text/markdown']) === 'text/markdown';
+const htmlToText = (html:string) => html.replace(/<a [^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/g,'[$2]($1)').replace(/<h2[^>]*>/g,'\n## ').replace(/<\/(p|h2|li)>/g,'\n').replace(/<li[^>]*>/g,'- ').replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/\n{3,}/g,'\n\n').trim();
 if (development) {
   const { createServer: createViteServer } = await import('vite');
   const vite = await createViteServer({server:{middlewareMode:true,hmr:{server:httpServer}},appType:'custom'});
@@ -79,6 +84,8 @@ if (development) {
 } else {
   template = await readFile(path.join(root,'dist/index.html'),'utf8');
   if(indexingEnabled) template = template.replace(/<meta name="robots" content="noindex,nofollow"\/>/,'<meta name="robots" content="index,follow"/>');
+  // The build date is when the static pages last changed; used as their sitemap lastmod.
+  buildDate = (await stat(path.join(root,'dist/index.html'))).mtime.toISOString().slice(0,10);
   app.use(express.static(path.join(root,'dist'),{index:false,redirect:false,maxAge:0}));
 }
 
@@ -87,10 +94,20 @@ async function htmlSource(url:string):Promise<string> {
   return transformHtml(url,source);
 }
 async function sendBlog(req:Request,res:Response,bootstrap:PublicBootstrap,status=200) {
-  const source = await htmlSource(req.originalUrl);
   res.setHeader('Cache-Control','no-store');
-  // Preserve the project's explicit noindex until the launch/indexing decision is separately approved.
   res.setHeader('X-Robots-Tag',publicRobots);
+  res.setHeader('Vary','Accept');
+  if(status===200) res.setHeader('Link',linkHeader(req.path));
+  if(wantsMarkdown(req)) {
+    const md = bootstrap.kind==='article'
+      ? `# ${bootstrap.post.title}\n\n${bootstrap.post.excerpt}\n\n${htmlToText(bootstrap.post.bodyHtml)}\n\nFonte: ${publishedOrigin}/blog/${bootstrap.post.slug}\n`
+      : bootstrap.kind==='index'
+        ? `# Blog SHOWBRINQ\n\n${publicRouteMetadata['/blog'].description}\n\n${bootstrap.posts.map(p=>`- [${p.title}](${publishedOrigin}/blog/${p.slug}): ${p.excerpt}`).join('\n')}\n`
+        : '# Artigo não encontrado\n';
+    res.status(status).type('text/markdown; charset=utf-8').send(md);
+    return;
+  }
+  const source = await htmlSource(req.originalUrl);
   res.status(status).type('html').send(renderBlogHtml(source,bootstrap));
 }
 app.get('/blog',async(req,res,next)=>{try{await sendBlog(req,res,{kind:'index',posts:await (localPlatform ? Promise.resolve(localPlatform.published()) : listPublishedPosts())});}catch(err){next(err);}});
@@ -104,9 +121,18 @@ app.get('/blog/:slug',async(req,res,next)=>{
 app.get('/blog/*',async(req,res,next)=>{try{await sendBlog(req,res,{kind:'not-found'},404);}catch(err){next(err);}});
 
 // Gateway prefers supplied documents; private URLs and drafts are intentionally absent.
+// Content-Signal (contentsignals.org): appear in search and AI answers, no model training.
 app.get('/robots.txt', (_req,res) => res.type('text/plain').send(indexingEnabled
-  ? `User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /admin-local\nDisallow: /api/\nSitemap: ${publishedOrigin}/sitemap.xml\n`
+  ? `User-agent: *\nContent-Signal: search=yes, ai-input=yes, ai-train=no\nAllow: /\nDisallow: /admin\nDisallow: /admin-local\nDisallow: /api/\n\nSitemap: ${publishedOrigin}/sitemap.xml\n`
   : 'User-agent: *\nDisallow: /\n'));
+app.get('/llms.txt', async (_req,res,next) => {
+  try {
+    let posts: Awaited<ReturnType<typeof listPublishedPosts>> = [];
+    try { posts = await (localPlatform ? Promise.resolve(localPlatform.published()) : listPublishedPosts()); } catch { /* static pages are still listed */ }
+    res.type('text/plain; charset=utf-8').setHeader('Cache-Control','public, max-age=3600');
+    res.send(llmsTxt(posts));
+  } catch(err) {next(err);}
+});
 app.get('/sitemap.xml', async (_req,res,next) => {
   try {
     // Static event pages remain discoverable if the CMS database is not configured.
@@ -115,7 +141,10 @@ app.get('/sitemap.xml', async (_req,res,next) => {
     try { posts = await (localPlatform ? Promise.resolve(localPlatform.published()) : listPublishedPosts()); }
     catch { console.warn('Sitemap: published CMS posts unavailable; serving public event routes only.'); }
     const publicPaths = ['/','/circuito-2027','/lojistas','/estandes','/credenciamento','/expositores','/expositores-2026','/hoteis-parceiros','/blog','/registros','/privacidade','/caderno-de-visita','/planejador-de-participacao',...editions.map(edition=>`/edicoes/${edition.id}`),...posts.map(post=>`/blog/${post.slug}`)];
-    const urls = publicPaths.map(p=>`<url><loc>${publishedOrigin}${p}</loc></url>`).join('');
+    const postDates = new Map(posts.map(post=>[`/blog/${post.slug}`,(post.updatedAt||post.publishedAt||'').slice(0,10)]));
+    const latestPost = [...postDates.values()].filter(Boolean).sort().pop();
+    const lastmod = (p:string) => postDates.get(p) || (p==='/blog' && latestPost && latestPost>buildDate ? latestPost : buildDate);
+    const urls = publicPaths.map(p=>`<url><loc>${publishedOrigin}${p}</loc><lastmod>${lastmod(p)}</lastmod></url>`).join('');
     res.type('application/xml').setHeader('Cache-Control','no-store');
     res.send(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`);
   } catch(err) {next(err);}
@@ -130,7 +159,17 @@ app.get('*',async(req,res,next)=>{
   try {
     if(/\.[a-z0-9]+$/i.test(req.path)) {res.status(404).type('text').send('Arquivo não encontrado.');return;}
     const known = ['/','/circuito-2027','/lojistas','/estandes','/credenciamento','/admin-local','/expositores','/expositores-2026','/hoteis-parceiros','/caderno-de-visita','/planejador-de-participacao','/registros','/privacidade'].includes(req.path) || /^\/edicoes\/(sao-luis|fortaleza|caruaru|feira-de-santana|goiania|piracicaba)$/.test(req.path);
+    const page = known ? pageContentFor(req.path) : null;
+    if(page) { res.setHeader('Link',linkHeader(req.path)); res.setHeader('Vary','Accept'); }
+    if(page && wantsMarkdown(req)) {
+      res.status(200).type('text/markdown; charset=utf-8').set({'Cache-Control':'no-store','X-Robots-Tag':publicRobots}).send(pageMarkdown(page));
+      return;
+    }
     let source = await htmlSource(req.originalUrl);
+    if(page) {
+      // Agents that do not run JavaScript still get the page's text, h1, canonical and JSON-LD.
+      source = source.replace('</head>',`${canonicalTag(req.path)}${structuredData(page)}</head>`).replace(/<div\s+id=["']root["']\s*>\s*<\/div>/,`<div id="root">${fallbackHtml(page)}</div>`);
+    }
     const edition = editions.find(item=>req.path===`/edicoes/${item.id}`);
     // The first HTML response must have meaningful metadata before the SPA hydrates.
     // Keep preview noindex unchanged until the organization approves publication.
