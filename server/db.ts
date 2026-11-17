@@ -25,8 +25,15 @@ export function getDbPool(): Pool {
     return pool;
   } catch {
     // Never include DATABASE_URL in an error, because it contains credentials.
+    console.error('Database unavailable: DATABASE_URL is not a valid mysql:// URL (check percent-encoding of the password).');
     throw new DatabaseUnavailableError();
   }
+}
+
+/** Logs only the driver error code (e.g. ER_ACCESS_DENIED_ERROR), never messages that could echo credentials. */
+function logDbFailure(context: string, error: unknown): void {
+  const code = typeof (error as { code?: unknown })?.code === 'string' ? (error as { code: string }).code : 'UNKNOWN';
+  console.error(`Database ${context} failed: ${code}`);
 }
 
 export async function acquireDbConnection(): Promise<PoolConnection> {
@@ -48,7 +55,8 @@ export async function databaseReady(): Promise<boolean> {
         (SELECT COUNT(*) FROM cms_admin WHERE id = 1) AS admin_row_ready
     `);
     return rows.length === 1 && Number(rows[0].migration_ready) === 1 && Number(rows[0].tables_ready) === 3 && Number(rows[0].admin_row_ready) === 1;
-  } catch {
+  } catch (error) {
+    if (!(error instanceof DatabaseUnavailableError)) logDbFailure('readiness check', error);
     return false;
   }
 }
