@@ -1,5 +1,8 @@
 // Approved metadata shared by initial HTML and client-side navigation.
 export const publicRouteMetadata:Record<string,{title:string;description:string}>={
+  '/sobre': {title:'Sobre a Showbrinq | Feira B2B de brinquedos',description:'Conheça a Showbrinq: um showroom que virou feira de negócios para aproximar fabricantes, distribuidores, representantes e lojistas de brinquedos. Realização MN Eventos.'},
+  '/contato': {title:'Contato | SHOWBRINQ',description:'Fale com a equipe da Showbrinq pelo WhatsApp comercial da MN Eventos ou pelo Instagram oficial.'},
+  '/termos': {title:'Termos de uso | SHOWBRINQ',description:'Condições de uso do site da Showbrinq 2027: informações do evento, ausência de contratação pelo site e serviços externos.'},
   '/circuito-2027': {title:'Circuito Showbrinq 2027 | Feiras B2B em seis cidades',description:'Confira as seis cidades e datas do Circuito Showbrinq 2027. Feira B2B de brinquedos para fabricantes, distribuidores, representantes e lojistas.'},
   '/estandes': {title:'Estandes Showbrinq 2027 | Modelos para expositores',description:'Compare quatro modelos de estandes para expor na Showbrinq 2027. Consulte estrutura, itens incluídos, valores e disponibilidade com a organização.'},
   '/credenciamento': {title:'Credenciamento por cidade | SHOWBRINQ 2027',description:'Consulte a disponibilidade do credenciamento de lojistas em cada edição.'},

@@ -42,13 +42,14 @@ const aboutContactSection: Section = {
   heading: 'Sobre, contato e privacidade',
   paragraphs: ['Showroom de brinquedos e presentes. Realização: MN Eventos.'],
   links: [
-    { label: 'Quem somos', href: '/#quem-somos' },
+    { label: 'Sobre a SHOWBRINQ', href: '/sobre' },
     { label: 'História da SHOWBRINQ', href: '/blog/historia-showbrinq' },
-    { label: 'Fale com a equipe', href: '/expositores#contato' },
+    { label: 'Contato', href: '/contato' },
     { label: `WhatsApp comercial: ${WHATSAPP_E164}`, href: WHATSAPP_URL },
     { label: `Telefone: ${WHATSAPP_E164}`, href: `tel:${WHATSAPP_E164}` },
     { label: 'Instagram @showbrinq.oficial', href: INSTAGRAM_URL },
     { label: 'Política de privacidade', href: '/privacidade' },
+    { label: 'Termos de uso', href: '/termos' },
   ],
 };
 
@@ -158,7 +159,10 @@ export function llmsTxt(posts: { slug: string; title: string; excerpt: string }[
     '## Contato e institucional',
     `- WhatsApp comercial: ${WHATSAPP_URL}`,
     `- Instagram: ${INSTAGRAM_URL}`,
-    `- [Quem somos](${publishedOrigin}/#quem-somos)`,
+    `- Servidor MCP (somente leitura): ${publishedOrigin}/mcp — card em ${publishedOrigin}/.well-known/mcp/server-card.json`,
+    `- [Sobre](${publishedOrigin}/sobre)`,
+    `- [Contato](${publishedOrigin}/contato)`,
+    `- [Termos de uso](${publishedOrigin}/termos)`,
     `- [Privacidade](${publishedOrigin}/privacidade)`,
     '',
   ];

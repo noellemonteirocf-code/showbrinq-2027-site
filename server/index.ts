@@ -14,6 +14,7 @@ import { databaseReady } from './db';
 import { renderBlogHtml, type PublicBootstrap } from './render-blog';
 import { publishedOrigin } from './origins';
 import { stat } from 'node:fs/promises';
+import { createMcpRouter } from './mcp';
 import { canonicalTag, fallbackHtml, linkHeader, llmsTxt, pageContentFor, pageMarkdown, structuredData } from './agent-ready';
 
 const app = express();
@@ -121,6 +122,8 @@ app.get('/blog/:slug',async(req,res,next)=>{
 app.get('/blog/*',async(req,res,next)=>{try{await sendBlog(req,res,{kind:'not-found'},404);}catch(err){next(err);}});
 
 // Gateway prefers supplied documents; private URLs and drafts are intentionally absent.
+// Read-only MCP server (Streamable HTTP) and its Server Card (SEP-1649).
+app.use(createMcpRouter(async () => (localPlatform ? localPlatform.published() : await listPublishedPosts())));
 // Content-Signal (contentsignals.org): appear in search and AI answers, no model training.
 app.get('/robots.txt', (_req,res) => res.type('text/plain').send(indexingEnabled
   ? `User-agent: *\nContent-Signal: search=yes, ai-input=yes, ai-train=no\nAllow: /\nDisallow: /admin\nDisallow: /admin-local\nDisallow: /api/\n\nSitemap: ${publishedOrigin}/sitemap.xml\n`
@@ -140,7 +143,7 @@ app.get('/sitemap.xml', async (_req,res,next) => {
     let posts: Awaited<ReturnType<typeof listPublishedPosts>> = [];
     try { posts = await (localPlatform ? Promise.resolve(localPlatform.published()) : listPublishedPosts()); }
     catch { console.warn('Sitemap: published CMS posts unavailable; serving public event routes only.'); }
-    const publicPaths = ['/','/circuito-2027','/lojistas','/estandes','/credenciamento','/expositores','/expositores-2026','/hoteis-parceiros','/blog','/registros','/privacidade','/caderno-de-visita','/planejador-de-participacao',...editions.map(edition=>`/edicoes/${edition.id}`),...posts.map(post=>`/blog/${post.slug}`)];
+    const publicPaths = ['/','/circuito-2027','/lojistas','/estandes','/credenciamento','/expositores','/expositores-2026','/hoteis-parceiros','/blog','/registros','/privacidade','/sobre','/contato','/termos','/caderno-de-visita','/planejador-de-participacao',...editions.map(edition=>`/edicoes/${edition.id}`),...posts.map(post=>`/blog/${post.slug}`)];
     const postDates = new Map(posts.map(post=>[`/blog/${post.slug}`,(post.updatedAt||post.publishedAt||'').slice(0,10)]));
     const latestPost = [...postDates.values()].filter(Boolean).sort().pop();
     const lastmod = (p:string) => postDates.get(p) || (p==='/blog' && latestPost && latestPost>buildDate ? latestPost : buildDate);
@@ -158,7 +161,7 @@ app.get('/admin/*',async(req,res,next)=>{
 app.get('*',async(req,res,next)=>{
   try {
     if(/\.[a-z0-9]+$/i.test(req.path)) {res.status(404).type('text').send('Arquivo não encontrado.');return;}
-    const known = ['/','/circuito-2027','/lojistas','/estandes','/credenciamento','/admin-local','/expositores','/expositores-2026','/hoteis-parceiros','/caderno-de-visita','/planejador-de-participacao','/registros','/privacidade'].includes(req.path) || /^\/edicoes\/(sao-luis|fortaleza|caruaru|feira-de-santana|goiania|piracicaba)$/.test(req.path);
+    const known = ['/','/circuito-2027','/lojistas','/estandes','/credenciamento','/admin-local','/expositores','/expositores-2026','/hoteis-parceiros','/caderno-de-visita','/planejador-de-participacao','/registros','/privacidade','/sobre','/contato','/termos'].includes(req.path) || /^\/edicoes\/(sao-luis|fortaleza|caruaru|feira-de-santana|goiania|piracicaba)$/.test(req.path);
     const page = known ? pageContentFor(req.path) : null;
     if(page) { res.setHeader('Link',linkHeader(req.path)); res.setHeader('Vary','Accept'); }
     if(page && wantsMarkdown(req)) {

@@ -16,7 +16,7 @@ import BlogPage from './pages/Blog';
 import CmsArticle from './pages/CmsArticle';
 import HotelsPage from './pages/Hotels';
 import Exhibitors2026Page from './components/HistoricalBrands';
-import { EditionPage, RecordsPage, PrivacyPage, NotFound } from './pages/Other';
+import { EditionPage, RecordsPage, PrivacyPage, NotFound, AboutPage, ContactPage, TermsPage } from './pages/Other';
 import { editions } from './data';
 import { registerAgentTools } from './agent-tools';
 import './styles.css';
@@ -175,6 +175,9 @@ function App() {
     <Route path="/edicoes/:id">{params=><EditionPage id={params.id}/>}</Route>
     <Route path="/registros" component={RecordsPage}/>
     <Route path="/privacidade" component={PrivacyPage}/>
+    <Route path="/sobre" component={AboutPage}/>
+    <Route path="/contato" component={ContactPage}/>
+    <Route path="/termos" component={TermsPage}/>
     <Route component={NotFound}/>
   </Switch></Layout>;
 }
