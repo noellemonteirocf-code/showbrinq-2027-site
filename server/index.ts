@@ -18,7 +18,12 @@ const app = express();
 const httpServer = createServer(app);
 const development = process.env.NODE_ENV !== 'production';
 const root = process.cwd();
-const port = Number(process.env.PORT || 3000);
+// Hostinger (and similar hosts) may hand over a numeric port or a socket/pipe path in PORT.
+const rawPort = (process.env.PORT ?? '').trim();
+const listenTarget: number | string = /^\d+$/.test(rawPort) ? Number(rawPort) : rawPort || 3000;
+// Indexing stays off unless explicitly enabled after the organization approves publication.
+const indexingEnabled = process.env.SITE_INDEXING === 'on';
+const publicRobots = indexingEnabled ? 'index, follow' : 'noindex, nofollow';
 app.disable('x-powered-by');
 app.use(cookieParser());
 app.use((req,res,next)=>{if(req.path.includes('.local-platform')){res.sendStatus(404);return;}next();});
@@ -56,6 +61,11 @@ app.get('/api/blog/posts/:slug', async (req,res,next) => {
     res.json({post});
   } catch(err) {next(err);}
 });
+if(!localPlatform) {
+  // Production has no registration table yet: serve the same "em breve" default the local preview starts with,
+  // so the credenciamento page does not show a loading error. Official URLs are added in code when approved.
+  app.get('/api/registration', (_req,res) => {res.json({cities:editions.map(edition=>({city:edition.id,status:'soon',url:''}))});});
+}
 app.use('/api', (_req,res) => {res.status(404).json({error:'Endpoint não encontrado.'});});
 
 let transformHtml: (url:string,source:string) => Promise<string> = async (_url,source) => source;
@@ -68,6 +78,7 @@ if (development) {
   app.use(vite.middlewares);
 } else {
   template = await readFile(path.join(root,'dist/index.html'),'utf8');
+  if(indexingEnabled) template = template.replace(/<meta name="robots" content="noindex,nofollow"\/>/,'<meta name="robots" content="index,follow"/>');
   app.use(express.static(path.join(root,'dist'),{index:false,redirect:false,maxAge:0}));
 }
 
@@ -79,7 +90,7 @@ async function sendBlog(req:Request,res:Response,bootstrap:PublicBootstrap,statu
   const source = await htmlSource(req.originalUrl);
   res.setHeader('Cache-Control','no-store');
   // Preserve the project's explicit noindex until the launch/indexing decision is separately approved.
-  res.setHeader('X-Robots-Tag','noindex, nofollow');
+  res.setHeader('X-Robots-Tag',publicRobots);
   res.status(status).type('html').send(renderBlogHtml(source,bootstrap));
 }
 app.get('/blog',async(req,res,next)=>{try{await sendBlog(req,res,{kind:'index',posts:await (localPlatform ? Promise.resolve(localPlatform.published()) : listPublishedPosts())});}catch(err){next(err);}});
@@ -93,7 +104,9 @@ app.get('/blog/:slug',async(req,res,next)=>{
 app.get('/blog/*',async(req,res,next)=>{try{await sendBlog(req,res,{kind:'not-found'},404);}catch(err){next(err);}});
 
 // Gateway prefers supplied documents; private URLs and drafts are intentionally absent.
-app.get('/robots.txt', (_req,res) => res.type('text/plain').send('User-agent: *\nDisallow: /\n'));
+app.get('/robots.txt', (_req,res) => res.type('text/plain').send(indexingEnabled
+  ? `User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /admin-local\nDisallow: /api/\nSitemap: ${publishedOrigin}/sitemap.xml\n`
+  : 'User-agent: *\nDisallow: /\n'));
 app.get('/sitemap.xml', async (_req,res,next) => {
   try {
     // Static event pages remain discoverable if the CMS database is not configured.
@@ -126,7 +139,7 @@ app.get('*',async(req,res,next)=>{
       const escape = (value:string)=>value.replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]!));
       source=source.replace(/<title>[^<]*<\/title>/,`<title>${escape(metadata.title)}</title>`).replace(/<meta name="description" content="[^"]*"\/>/,`<meta name="description" content="${escape(metadata.description)}"/>`);
     }
-    res.status(known?200:404).type('html').set({'Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow'}).send(source);
+    res.status(known?200:404).type('html').set({'Cache-Control':'no-store','X-Robots-Tag':known?publicRobots:'noindex, nofollow'}).send(source);
   }catch(err){next(err);}
 });
 const errorHandler: ErrorRequestHandler = (err,req,res,_next) => {
@@ -138,4 +151,6 @@ const errorHandler: ErrorRequestHandler = (err,req,res,_next) => {
   else res.status(status).type('html').set('X-Robots-Tag','noindex, nofollow').send('<!doctype html><html lang="pt-BR"><head><title>Conteúdo temporariamente indisponível | SHOWBRINQ</title><meta name="robots" content="noindex,nofollow"></head><body><main><h1>Conteúdo temporariamente indisponível.</h1><p>Tente novamente em instantes.</p><a href="/">Voltar à SHOWBRINQ</a></main></body></html>');
 };
 app.use(errorHandler);
-httpServer.listen(port,development?'127.0.0.1':'0.0.0.0',()=>console.log(`SHOWBRINQ listening on port ${port}`));
+const onListening = () => console.log(`SHOWBRINQ listening on ${typeof listenTarget === 'number' ? `port ${listenTarget}` : 'the socket provided in PORT'}`);
+if(typeof listenTarget === 'number') httpServer.listen(listenTarget,development?'127.0.0.1':'0.0.0.0',onListening);
+else httpServer.listen(listenTarget,onListening);
