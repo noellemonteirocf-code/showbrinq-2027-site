@@ -113,6 +113,12 @@ function editionEvent(e: (typeof editions)[number]) {
     eventStatus: 'https://schema.org/EventScheduled', eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     location: { '@type': 'Place', name: `${e.city} (${e.uf})`, address: { '@type': 'PostalAddress', addressLocality: e.city, addressRegion: e.uf, addressCountry: 'BR' } },
     organizer: { '@id': `${publishedOrigin}/#organization` },
+    // Entrada gratuita para lojistas com CNPJ ou MEI (site: FAQ e privacidade); credenciamento por cidade.
+    offers: {
+      '@type': 'Offer', name: 'Entrada gratuita para lojistas com CNPJ ou MEI',
+      description: 'Entrada gratuita para lojistas com CNPJ, inclusive MEI. Credenciamento por cidade, com abertura divulgada pela organização.',
+      price: 0, priceCurrency: 'BRL', url: `${publishedOrigin}/credenciamento`,
+    },
   };
 }
 
