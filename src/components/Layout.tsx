@@ -2,7 +2,6 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useLocation } from 'wouter';
 import { ArrowUpRight, Menu, X, Instagram, ArrowRight, Sparkles, Pause } from 'lucide-react';
 import { APP_NAME, ASSETS, INSTAGRAM_URL } from '../config';
-import MeasurementChoice from './MeasurementChoice';
 import Motion, { motionPreference } from './Motion';
 
 const primaryNav: Array<[string, string, string?]> = [
@@ -148,7 +147,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <div><h4>Fique por perto</h4><a href={INSTAGRAM_URL} target="_blank" rel="noreferrer"><Instagram size={19} /> Instagram da SHOWBRINQ <ArrowUpRight size={16} /></a><Link href="/blog">Blog SHOWBRINQ</Link><a href={contactHref}>Fale com a equipe</a><button className="footer-motion" onClick={changeMotion} disabled={reduced}>{reduced ? 'Movimento reduzido pelo sistema' : animations ? 'Reduzir as animações do site' : 'Ativar as animações do site'}</button></div>
       </div>
       <div className="container footer-bottom"><span>© SHOWBRINQ · Prévia do circuito 2027</span><span>Condições operacionais por edição a confirmar.</span><Link href="/privacidade">Privacidade</Link></div>
-    </footer><MeasurementChoice/>
+    </footer>
     <div className={`mobile-bottom-nav${heroActionsVisible ? ' is-context-hidden' : ''}${isExhibitorPage ? ' is-exhibitor' : ''}`}>{isExhibitorPage ? <Link href="/expositores#contato">Preparar consulta <ArrowUpRight size={18} /></Link> : <><Link href="/credenciamento">Quero visitar <ArrowUpRight size={18} /></Link><Link href="/expositores">Quero expor <ArrowUpRight size={18} /></Link></>}</div>
   </>;
 }
