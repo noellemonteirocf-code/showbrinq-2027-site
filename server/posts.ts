@@ -50,6 +50,8 @@ function mapPost(row: PostRow, publicView = false): BlogPost {
   };
 }
 
+// Columns written on create (selectColumns also carries computed, read-only columns).
+const insertColumns = 'title, slug, excerpt, category, cover_url, cover_alt, body_html, seo_title, seo_description, featured, status, revision, created_at, updated_at, published_at';
 const selectColumns = 'id, title, slug, excerpt, category, cover_url, cover_alt, body_html, seo_title, seo_description, featured, status, revision, created_at, updated_at, published_at, TIMESTAMPDIFF(SECOND, CURRENT_TIMESTAMP(3), published_at) AS publish_in_seconds';
 
 /** Public read API; status is constrained in SQL, never accept client-selected public rows. */
@@ -92,7 +94,12 @@ async function coverBelongsToAdmin(fields: PostFields, openId: string): Promise<
 }
 
 function asyncRoute(handler: (req: AdminRequest, res: Response, next: NextFunction) => Promise<void>) {
-  return (req: AdminRequest, res: Response, next: NextFunction) => { void handler(req, res, next).catch(() => safeFailure(res)); };
+  return (req: AdminRequest, res: Response, next: NextFunction) => { void handler(req, res, next).catch((error: unknown) => {
+    // Only the driver error code is logged: never SQL text, values or credentials.
+    const code = typeof (error as { code?: unknown })?.code === 'string' ? (error as { code: string }).code : 'UNKNOWN';
+    console.error(`CMS posts request failed: ${code}`);
+    safeFailure(res);
+  }); };
 }
 
 export const adminPostsRouter = Router();
@@ -120,7 +127,7 @@ adminPostsRouter.post('/', requireCsrf, asyncRoute(async (req, res) => {
   if (!(await coverBelongsToAdmin(parsed.data, identity.openId))) { res.status(400).json({ error: 'A imagem de capa não está disponível para esta conta.', code: 'invalid_cover' }); return; }
   try {
     const [result] = await getDbPool().execute<ResultSetHeader>(
-      `INSERT INTO cms_posts (${selectColumns.replace(/\bid\b, /, '')}) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', 1, CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3), NULL)`,
+      `INSERT INTO cms_posts (${insertColumns}) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', 1, CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3), NULL)`,
       fieldsValues(parsed.data),
     );
     const [rows] = await getDbPool().execute<PostRow[]>(`SELECT ${selectColumns} FROM cms_posts WHERE id = ?`, [result.insertId]);
