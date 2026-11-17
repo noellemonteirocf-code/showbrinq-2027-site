@@ -65,7 +65,7 @@ export function createMcpRouter(listPosts: () => Promise<Post[]>) {
       return textResult(posts.map(p => ({ titulo: p.title, resumo: p.excerpt, categoria: p.category, publicado_em: p.publishedAt, url: `${publishedOrigin}/blog/${p.slug}` })));
     }
     if (name === 'contato') {
-      return textResult({ whatsapp_comercial: 'https://wa.me/5581999229812', telefone: '+55 81 99922-9812', instagram: 'https://www.instagram.com/showbrinq.oficial/', pagina_contato: `${publishedOrigin}/contato`, realizacao: 'MN Eventos' });
+      return textResult({ whatsapp_comercial: 'https://wa.me/5581999229812', whatsapp_numero: '+55 81 99922-9812', instagram: 'https://www.instagram.com/showbrinq.oficial/', pagina_contato: `${publishedOrigin}/contato`, realizacao: 'MN Eventos' });
     }
     return null;
   }

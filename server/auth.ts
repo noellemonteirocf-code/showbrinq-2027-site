@@ -1,64 +1,79 @@
-import { createHash, createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
+import { createHash, timingSafeEqual } from 'node:crypto';
 import type { NextFunction, Request, RequestHandler, Response } from 'express';
 import { Router } from 'express';
 import { jwtVerify, SignJWT, type JWTPayload } from 'jose';
 import type { RowDataPacket } from 'mysql2/promise';
 import type { AdminSession } from '../shared/cms.js';
 import { acquireDbConnection, getDbPool } from './db.js';
-import { allowedPublicOrigin, isAllowedOrigin } from './security.js';
+import { isAllowedOrigin } from './security.js';
 
-const SESSION_COOKIE = 'webdev_app_session';
-const OAUTH_STATE_COOKIE = 'cms_oauth_state';
+// Own e-mail + password login for the single blog administrator. The credentials live only in
+// the host's environment variables (BLOG_ADMIN_EMAIL, BLOG_ADMIN_PASSWORD); nothing depends on Manus.
+const SESSION_COOKIE = 'showbrinq_admin_session';
+const APP_ID = 'showbrinq-cms';
 const SESSION_TTL_SECONDS = 12 * 60 * 60;
-const OAUTH_TTL_SECONDS = 10 * 60;
 const CSRF_TTL_SECONDS = 60 * 60;
-const CALLBACK_PATH = '/api/auth/callback';
-const SESSION_PATH = '/';
+const MIN_PASSWORD_LENGTH = 12;
 const SAFE_ERRORS = {
   unauthenticated: 'Autenticação necessária.',
   forbidden: 'Acesso administrativo não autorizado.',
-  unconfigured: 'Autenticação administrativa indisponível. Verifique a configuração do serviço.',
+  unconfigured: 'O acesso ao painel ainda não foi configurado. Defina BLOG_ADMIN_EMAIL e BLOG_ADMIN_PASSWORD nas variáveis de ambiente.',
   origin: 'Origem não autorizada.',
   csrf: 'Token de segurança ausente ou inválido. Atualize a sessão e tente novamente.',
-  generic: 'Não foi possível concluir a autenticação. Tente novamente.',
+  credentials: 'E-mail ou senha incorretos.',
+  locked: 'Muitas tentativas de acesso. Aguarde 15 minutos e tente novamente.',
 };
 
-interface OAuthConfig {
-  projectId: string;
-  portalUrl: string;
-  apiUrl: string;
-  secret: Uint8Array;
-  adminEmail: string;
-}
-interface OAuthState { redirectUri: string; nonce: string; }
-interface ManusIdentity { openId: string; email: string; name?: string; }
-interface SessionClaims extends JWTPayload { appId: string; openId: string; exp: number; name?: string; }
+interface AuthConfig { adminEmail: string; passwordDigest: Buffer; secret: Uint8Array; }
+interface SessionClaims extends JWTPayload { appId: string; openId: string; exp: number; }
 interface ParsedSession { token: string; claims: SessionClaims; }
 export interface AdminIdentity { openId: string; expiresAt: number; }
 export interface AdminRequest extends Request { adminIdentity?: AdminIdentity; }
 interface AdminRow extends RowDataPacket { open_id: string | null; }
 
 export class AuthConfigurationError extends Error { constructor() { super('Auth configuration unavailable'); } }
-class ForbiddenIdentityError extends Error { constructor() { super('Forbidden identity'); } }
 
-function getOAuthConfig(): OAuthConfig {
-  const projectId = process.env.MANUS_PROJECT_ID?.trim();
-  const portalUrl = process.env.MANUS_OAUTH_PORTAL_URL?.trim();
-  const apiUrl = process.env.MANUS_OAUTH_API_URL?.trim();
-  const rawSecret = process.env.MANUS_JWT_SECRET;
-  const adminEmail = process.env.BLOG_ADMIN_EMAIL?.trim();
-  if (!projectId || !portalUrl || !apiUrl || !rawSecret || !adminEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(adminEmail)) {
-    throw new AuthConfigurationError();
-  }
-  try {
-    if (new URL(portalUrl).protocol !== 'https:' || new URL(apiUrl).protocol !== 'https:') throw new Error('invalid');
-  } catch {
-    throw new AuthConfigurationError();
-  }
-  return { projectId, portalUrl, apiUrl: apiUrl.replace(/\/+$/, ''), secret: new TextEncoder().encode(rawSecret), adminEmail };
+const sha256 = (value: string) => createHash('sha256').update(value, 'utf8').digest();
+
+function getAuthConfig(): AuthConfig {
+  const adminEmail = process.env.BLOG_ADMIN_EMAIL?.trim().toLocaleLowerCase('en-US');
+  const password = process.env.BLOG_ADMIN_PASSWORD ?? '';
+  if (!adminEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(adminEmail) || password.length < MIN_PASSWORD_LENGTH) throw new AuthConfigurationError();
+  // Changing the password (or the database) invalidates every existing session.
+  const secret = sha256(`showbrinq-admin-session-v1\0${adminEmail}\0${password}\0${process.env.DATABASE_URL ?? ''}`);
+  return { adminEmail, passwordDigest: sha256(password), secret: new Uint8Array(secret) };
 }
 
-function keyFromSecret(secret: Uint8Array): Uint8Array { return secret; }
+const adminOpenId = (email: string) => `email:${email}`;
+
+/** Constant-time check of the submitted credentials against the configured ones. */
+export function credentialsMatch(config: Pick<AuthConfig, 'adminEmail' | 'passwordDigest'>, email: string, password: string): boolean {
+  const emailOk = timingSafeEqual(sha256(email.trim().toLocaleLowerCase('en-US')), sha256(config.adminEmail));
+  const passwordOk = timingSafeEqual(sha256(password), config.passwordDigest);
+  return emailOk && passwordOk;
+}
+
+/** In-memory lockout: after `max` failures inside `windowMs`, the key is blocked until the window ends. */
+export function createLoginLimiter(max = 5, windowMs = 15 * 60 * 1000, now: () => number = Date.now) {
+  const failures = new Map<string, { count: number; first: number }>();
+  return {
+    blocked(key: string): boolean {
+      const entry = failures.get(key);
+      if (!entry) return false;
+      if (now() - entry.first > windowMs) { failures.delete(key); return false; }
+      return entry.count >= max;
+    },
+    fail(key: string): void {
+      const entry = failures.get(key);
+      if (!entry || now() - entry.first > windowMs) failures.set(key, { count: 1, first: now() });
+      else entry.count += 1;
+    },
+    reset(key: string): void { failures.delete(key); },
+  };
+}
+const loginLimiter = createLoginLimiter();
+// One lockout bucket per client address plus a global bucket, so a distributed attempt still trips it.
+const limiterKeys = (req: Request) => [`ip:${req.ip ?? 'unknown'}`, 'global'];
 
 function cookieValue(req: Request, name: string): string | null {
   const header = req.headers.cookie;
@@ -71,105 +86,46 @@ function cookieValue(req: Request, name: string): string | null {
   return null;
 }
 
-function oauthStateCookie(payload: { nonce: string; origin: string; expiresAt: number }, secret: Uint8Array): string {
-  const packed = Buffer.from(JSON.stringify(payload)).toString('base64url');
-  const signature = createHmac('sha256', secret).update(packed).digest('base64url');
-  return `${packed}.${signature}`;
-}
+const cookieOptions = () => ({ httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' as const, path: '/' });
+function setSessionCookie(res: Response, token: string): void { res.cookie(SESSION_COOKIE, token, { ...cookieOptions(), maxAge: SESSION_TTL_SECONDS * 1000 }); }
+function clearSessionCookie(res: Response): void { res.clearCookie(SESSION_COOKIE, cookieOptions()); }
 
-function verifyOAuthStateCookie(value: string | null, state: OAuthState, origin: string, secret: Uint8Array): boolean {
-  if (!value || value.length > 2048) return false;
-  const parts = value.split('.');
-  if (parts.length !== 2 || !/^[A-Za-z0-9_-]+$/.test(parts[0]) || !/^[A-Za-z0-9_-]+$/.test(parts[1])) return false;
-  const expected = createHmac('sha256', secret).update(parts[0]).digest();
-  const supplied = Buffer.from(parts[1], 'base64url');
-  if (expected.length !== supplied.length || !timingSafeEqual(expected, supplied)) return false;
-  try {
-    const payload = JSON.parse(Buffer.from(parts[0], 'base64url').toString('utf8')) as { nonce?: unknown; origin?: unknown; expiresAt?: unknown };
-    const callback = `${origin}${CALLBACK_PATH}`;
-    const now = Math.floor(Date.now() / 1000);
-    return payload.nonce === state.nonce && payload.origin === origin && typeof payload.expiresAt === 'number' && payload.expiresAt > now && payload.expiresAt <= now + OAUTH_TTL_SECONDS && state.redirectUri === callback;
-  } catch { return false; }
-}
-
-/** Pure bounded state decoder; authenticity is provided separately by the nonce cookie signature. */
-export function decodeOAuthState(value: unknown): OAuthState | null {
-  if (typeof value !== 'string' || value.length < 16 || value.length > 4096 || !/^[A-Za-z0-9+/_-]+={0,2}$/.test(value)) return null;
-  try {
-    const base64 = value.replace(/-/g, '+').replace(/_/g, '/');
-    const parsed = JSON.parse(Buffer.from(base64, 'base64').toString('utf8')) as Record<string, unknown>;
-    if (typeof parsed.redirectUri !== 'string' || parsed.redirectUri.length > 2048 || typeof parsed.nonce !== 'string' || !/^[A-Za-z0-9_-]{32,128}$/.test(parsed.nonce)) return null;
-    return { redirectUri: parsed.redirectUri, nonce: parsed.nonce };
-  } catch { return null; }
-}
-
-function getAdminEmail(config: OAuthConfig): string { return config.adminEmail.trim().toLocaleLowerCase('en-US'); }
-
-async function isBoundAdmin(openId: string): Promise<boolean> {
-  const [rows] = await getDbPool().execute<AdminRow[]>('SELECT open_id FROM cms_admin WHERE id = 1 LIMIT 1');
-  return rows.length === 1 && rows[0].open_id === openId;
-}
-
-async function bindFirstAdmin(identity: ManusIdentity, config: OAuthConfig): Promise<void> {
-  const connection = await acquireDbConnection();
-  try {
-    await connection.beginTransaction();
-    const [rows] = await connection.execute<AdminRow[]>('SELECT open_id FROM cms_admin WHERE id = 1 FOR UPDATE');
-    if (rows.length !== 1) throw new AuthConfigurationError();
-    const boundOpenId = rows[0].open_id;
-    if (boundOpenId && boundOpenId !== identity.openId) throw new ForbiddenIdentityError();
-    if (!boundOpenId) {
-      await connection.execute('UPDATE cms_admin SET open_id = ?, email = ?, updated_at = CURRENT_TIMESTAMP(3) WHERE id = 1 AND open_id IS NULL', [identity.openId, getAdminEmail(config)]);
-    }
-    await connection.commit();
-  } catch (error) {
-    try { await connection.rollback(); } catch { /* keep failures generic */ }
-    throw error;
-  } finally {
-    connection.release();
-  }
-}
-
-function setSessionCookie(res: Response, token: string): void {
-  res.cookie(SESSION_COOKIE, token, {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'none',
-    path: SESSION_PATH,
-    maxAge: SESSION_TTL_SECONDS * 1000,
-  });
-}
-function clearSessionCookie(res: Response): void {
-  res.clearCookie(SESSION_COOKIE, { httpOnly: true, secure: true, sameSite: 'none', path: SESSION_PATH });
-}
-function clearOAuthCookie(res: Response): void {
-  res.clearCookie(OAUTH_STATE_COOKIE, { httpOnly: true, secure: true, sameSite: 'none', path: CALLBACK_PATH });
-}
-
-async function createSessionToken(identity: ManusIdentity, config: OAuthConfig): Promise<string> {
-  return new SignJWT({ appId: config.projectId, openId: identity.openId, name: identity.name || 'Administrador' })
+async function createSessionToken(openId: string, config: AuthConfig): Promise<string> {
+  return new SignJWT({ appId: APP_ID, openId })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(`${SESSION_TTL_SECONDS}s`)
-    .sign(keyFromSecret(config.secret));
+    .sign(config.secret);
 }
 
 async function readSession(req: Request): Promise<ParsedSession | null> {
   const token = cookieValue(req, SESSION_COOKIE);
   if (!token || token.length > 8192) return null;
   try {
-    const config = getOAuthConfig();
-    const { payload, protectedHeader } = await jwtVerify(token, keyFromSecret(config.secret), { algorithms: ['HS256'] });
-    if (protectedHeader.alg !== 'HS256' || payload.appId !== config.projectId || typeof payload.openId !== 'string' || !payload.openId.trim() || payload.openId.length > 255 || /[\u0000-\u001f\u007f]/.test(payload.openId) || typeof payload.exp !== 'number' || payload.exp <= Math.floor(Date.now() / 1000)) return null;
+    const config = getAuthConfig();
+    const { payload } = await jwtVerify(token, config.secret, { algorithms: ['HS256'] });
+    if (payload.appId !== APP_ID || payload.openId !== adminOpenId(config.adminEmail) || typeof payload.exp !== 'number') return null;
     return { token, claims: payload as SessionClaims };
   } catch { return null; }
 }
 
+/** Keeps cms_admin (used by the health check and media ownership) pointing at the configured admin. */
+async function bindAdmin(openId: string, email: string): Promise<void> {
+  const connection = await acquireDbConnection();
+  try {
+    const [rows] = await connection.execute<AdminRow[]>('SELECT open_id FROM cms_admin WHERE id = 1 LIMIT 1');
+    if (rows.length !== 1) throw new AuthConfigurationError();
+    if (rows[0].open_id !== openId) {
+      await connection.execute('UPDATE cms_admin SET open_id = ?, email = ?, updated_at = CURRENT_TIMESTAMP(3) WHERE id = 1', [openId, email]);
+    }
+  } finally {
+    connection.release();
+  }
+}
+
 export async function readAdminIdentity(req: Request): Promise<AdminIdentity | null> {
   const session = await readSession(req);
-  if (!session) return null;
-  if (!(await isBoundAdmin(session.claims.openId))) return null;
-  return { openId: session.claims.openId, expiresAt: session.claims.exp };
+  return session ? { openId: session.claims.openId, expiresAt: session.claims.exp } : null;
 }
 
 function sendError(res: Response, status: number, error: string, code: string): void {
@@ -178,48 +134,34 @@ function sendError(res: Response, status: number, error: string, code: string): 
 
 export const requireAdmin: RequestHandler = async (req: AdminRequest, res: Response, next: NextFunction) => {
   res.setHeader('Cache-Control', 'private, no-store');
-  try { getOAuthConfig(); }
+  try { getAuthConfig(); }
   catch { sendError(res, 503, SAFE_ERRORS.unconfigured, 'unconfigured'); return; }
-
-  const session = await readSession(req);
-  if (!session) { sendError(res, 401, SAFE_ERRORS.unauthenticated, 'unauthorized'); return; }
-  try {
-    if (!(await isBoundAdmin(session.claims.openId))) { sendError(res, 403, SAFE_ERRORS.forbidden, 'forbidden'); return; }
-    req.adminIdentity = { openId: session.claims.openId, expiresAt: session.claims.exp };
-    next();
-  } catch {
-    // Do not expose driver errors or database URL/configuration.
-    sendError(res, 503, SAFE_ERRORS.unconfigured, 'unavailable');
-  }
+  const identity = await readAdminIdentity(req);
+  if (!identity) { sendError(res, 401, SAFE_ERRORS.unauthenticated, 'unauthorized'); return; }
+  req.adminIdentity = identity;
+  next();
 };
 
-function sessionHash(token: string): string { return createHash('sha256').update(token).digest('base64url'); }
+const sessionHash = (token: string) => createHash('sha256').update(token).digest('base64url');
 
-async function createCsrfToken(session: ParsedSession, config: OAuthConfig): Promise<string> {
+async function createCsrfToken(session: ParsedSession, config: AuthConfig): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   const exp = Math.min(session.claims.exp, now + CSRF_TTL_SECONDS);
-  return new SignJWT({
-    purpose: 'cms-csrf', appId: config.projectId, openId: session.claims.openId, sessionHash: sessionHash(session.token),
-  }).setProtectedHeader({ alg: 'HS256' }).setIssuedAt(now).setExpirationTime(exp).sign(keyFromSecret(config.secret));
+  return new SignJWT({ purpose: 'cms-csrf', appId: APP_ID, openId: session.claims.openId, sessionHash: sessionHash(session.token) })
+    .setProtectedHeader({ alg: 'HS256' }).setIssuedAt(now).setExpirationTime(exp).sign(config.secret);
 }
 
 export const requireCsrf: RequestHandler = async (req: AdminRequest, res: Response, next: NextFunction) => {
   if (!isAllowedOrigin(req.get('origin'))) { sendError(res, 403, SAFE_ERRORS.origin, 'origin_forbidden'); return; }
-  const identity = req.adminIdentity ?? await readAdminIdentity(req);
-  if (!identity) {
-    const session = await readSession(req);
-    sendError(res, session ? 403 : 401, session ? SAFE_ERRORS.forbidden : SAFE_ERRORS.unauthenticated, session ? 'forbidden' : 'unauthorized');
-    return;
-  }
   const session = await readSession(req);
+  if (!session) { sendError(res, 401, SAFE_ERRORS.unauthenticated, 'unauthorized'); return; }
   const supplied = req.get('x-csrf-token');
-  if (!session || !supplied || supplied.length > 4096) { sendError(res, 403, SAFE_ERRORS.csrf, 'csrf_invalid'); return; }
+  if (!supplied || supplied.length > 4096) { sendError(res, 403, SAFE_ERRORS.csrf, 'csrf_invalid'); return; }
   try {
-    const config = getOAuthConfig();
-    const { payload } = await jwtVerify(supplied, keyFromSecret(config.secret), { algorithms: ['HS256'] });
-    if (payload.purpose !== 'cms-csrf' || payload.appId !== config.projectId || payload.openId !== identity.openId || payload.sessionHash !== sessionHash(session.token)) {
-      sendError(res, 403, SAFE_ERRORS.csrf, 'csrf_invalid');
-      return;
+    const config = getAuthConfig();
+    const { payload } = await jwtVerify(supplied, config.secret, { algorithms: ['HS256'] });
+    if (payload.purpose !== 'cms-csrf' || payload.appId !== APP_ID || payload.openId !== session.claims.openId || payload.sessionHash !== sessionHash(session.token)) {
+      sendError(res, 403, SAFE_ERRORS.csrf, 'csrf_invalid'); return;
     }
     next();
   } catch {
@@ -227,92 +169,39 @@ export const requireCsrf: RequestHandler = async (req: AdminRequest, res: Respon
   }
 };
 
-async function exchangeManusCode(code: string, redirectUri: string, config: OAuthConfig): Promise<ManusIdentity> {
-  const base = config.apiUrl;
-  const exchangeResponse = await fetch(`${base}/webdev.v1.WebDevAuthPublicService/ExchangeToken`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ clientId: config.projectId, grantType: 'authorization_code', code, redirectUri }),
-    signal: AbortSignal.timeout(15_000),
-  });
-  if (!exchangeResponse.ok) throw new Error('OAuth exchange failed');
-  const exchange = await exchangeResponse.json() as { accessToken?: unknown };
-  if (typeof exchange.accessToken !== 'string' || !exchange.accessToken) throw new Error('OAuth exchange response invalid');
-  const identityResponse = await fetch(`${base}/webdev.v1.WebDevAuthPublicService/GetUserInfo`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ accessToken: exchange.accessToken }),
-    signal: AbortSignal.timeout(15_000),
-  });
-  if (!identityResponse.ok) throw new Error('OAuth identity lookup failed');
-  const identity = await identityResponse.json() as { openId?: unknown; email?: unknown; name?: unknown };
-  if (typeof identity.openId !== 'string' || !identity.openId.trim() || identity.openId.length > 255 || /[\u0000-\u001f\u007f]/.test(identity.openId) || typeof identity.email !== 'string' || !identity.email.trim() || identity.email.length > 320) {
-    throw new Error('OAuth identity invalid');
-  }
-  return { openId: identity.openId, email: identity.email.trim(), ...(typeof identity.name === 'string' && identity.name.trim() ? { name: identity.name.trim().slice(0, 100) } : {}) };
-}
-
 export const authRouter = Router();
 export const sessionRouter = Router();
 
-const oauthCallbackUrl = (origin: string) => `${origin}${CALLBACK_PATH}`;
-
-authRouter.get('/start', async (req: Request, res: Response) => {
-  let config: OAuthConfig;
-  try { config = getOAuthConfig(); }
+authRouter.post('/login', async (req: Request, res: Response) => {
+  res.setHeader('Cache-Control', 'private, no-store');
+  if (!isAllowedOrigin(req.get('origin'))) { sendError(res, 403, SAFE_ERRORS.origin, 'origin_forbidden'); return; }
+  let config: AuthConfig;
+  try { config = getAuthConfig(); }
   catch { sendError(res, 503, SAFE_ERRORS.unconfigured, 'unconfigured'); return; }
-  const origin = allowedPublicOrigin(req.query.origin);
-  if (!origin || (req.get('origin') && req.get('origin') !== origin)) { sendError(res, 403, SAFE_ERRORS.origin, 'origin_forbidden'); return; }
-  const nonce = randomBytes(32).toString('base64url');
-  const expiresAt = Math.floor(Date.now() / 1000) + OAUTH_TTL_SECONDS;
-  const redirectUri = oauthCallbackUrl(origin);
-  const state = Buffer.from(JSON.stringify({ redirectUri, nonce })).toString('base64');
-  res.cookie(OAUTH_STATE_COOKIE, oauthStateCookie({ nonce, origin, expiresAt }, config.secret), {
-    httpOnly: true, secure: true, sameSite: 'none', path: CALLBACK_PATH, maxAge: OAUTH_TTL_SECONDS * 1000,
-  });
-  const portal = new URL('/app-auth', config.portalUrl);
-  portal.searchParams.set('appId', config.projectId);
-  portal.searchParams.set('redirectUri', redirectUri);
-  portal.searchParams.set('state', state);
-  portal.searchParams.set('responseType', 'code');
-  res.redirect(302, portal.toString());
+  const keys = limiterKeys(req);
+  if (keys.some(key => loginLimiter.blocked(key))) { sendError(res, 429, SAFE_ERRORS.locked, 'too_many_attempts'); return; }
+  const body = (req.body ?? {}) as { email?: unknown; password?: unknown };
+  const email = typeof body.email === 'string' ? body.email.slice(0, 320) : '';
+  const password = typeof body.password === 'string' ? body.password.slice(0, 1024) : '';
+  if (!credentialsMatch(config, email, password)) {
+    keys.forEach(key => loginLimiter.fail(key));
+    sendError(res, 401, SAFE_ERRORS.credentials, 'invalid_credentials');
+    return;
+  }
+  keys.forEach(key => loginLimiter.reset(key));
+  try {
+    const openId = adminOpenId(config.adminEmail);
+    await bindAdmin(openId, config.adminEmail);
+    setSessionCookie(res, await createSessionToken(openId, config));
+    res.status(204).end();
+  } catch {
+    sendError(res, 503, SAFE_ERRORS.unconfigured, 'unavailable');
+  }
 });
 
-authRouter.get('/callback', async (req: Request, res: Response) => {
-  let config: OAuthConfig;
-  try { config = getOAuthConfig(); }
-  catch { clearOAuthCookie(res); sendError(res, 503, SAFE_ERRORS.unconfigured, 'unconfigured'); return; }
-
-  const state = decodeOAuthState(req.query.state);
-  if (!state) { clearOAuthCookie(res); sendError(res, 400, SAFE_ERRORS.generic, 'oauth_state_invalid'); return; }
-  let callback: URL;
-  try { callback = new URL(state.redirectUri); } catch { clearOAuthCookie(res); sendError(res, 400, SAFE_ERRORS.generic, 'oauth_state_invalid'); return; }
-  const origin = allowedPublicOrigin(callback.origin);
-  if (!origin || callback.pathname !== CALLBACK_PATH || callback.search || callback.hash || state.redirectUri !== oauthCallbackUrl(origin)) {
-    clearOAuthCookie(res); sendError(res, 400, SAFE_ERRORS.generic, 'oauth_state_invalid'); return;
-  }
-  const cookie = cookieValue(req, OAUTH_STATE_COOKIE);
-  if (!verifyOAuthStateCookie(cookie, state, origin, config.secret)) {
-    clearOAuthCookie(res); sendError(res, 400, SAFE_ERRORS.generic, 'oauth_state_invalid'); return;
-  }
-  clearOAuthCookie(res);
-  if (typeof req.query.code !== 'string' || req.query.code.length < 1 || req.query.code.length > 4096 || req.query.error) {
-    sendError(res, 400, SAFE_ERRORS.generic, 'oauth_exchange_failed'); return;
-  }
-
-  try {
-    const identity = await exchangeManusCode(req.query.code, state.redirectUri, config);
-    if (identity.email.toLocaleLowerCase('en-US') !== getAdminEmail(config)) {
-      sendError(res, 403, SAFE_ERRORS.forbidden, 'forbidden'); return;
-    }
-    await bindFirstAdmin(identity, config);
-    setSessionCookie(res, await createSessionToken(identity, config));
-    res.redirect(302, `${origin}/admin`);
-  } catch (error) {
-    if (error instanceof ForbiddenIdentityError) { sendError(res, 403, SAFE_ERRORS.forbidden, 'forbidden'); return; }
-    if (error instanceof AuthConfigurationError) { sendError(res, 503, SAFE_ERRORS.unconfigured, 'unconfigured'); return; }
-    sendError(res, 503, SAFE_ERRORS.generic, 'oauth_unavailable');
-  }
+// The former Manus OAuth endpoints are gone; answer clearly instead of a generic 404.
+authRouter.get(['/start', '/callback'], (_req: Request, res: Response) => {
+  res.redirect(302, '/admin');
 });
 
 authRouter.post('/logout', requireAdmin, requireCsrf, (_req: Request, res: Response) => {
@@ -322,8 +211,8 @@ authRouter.post('/logout', requireAdmin, requireCsrf, (_req: Request, res: Respo
 
 sessionRouter.get('/session', async (req: Request, res: Response) => {
   res.setHeader('Cache-Control', 'private, no-store');
-  let config: OAuthConfig;
-  try { config = getOAuthConfig(); }
+  let config: AuthConfig;
+  try { config = getAuthConfig(); }
   catch {
     const session: AdminSession = { authenticated: false, authorized: false, configured: false, reason: SAFE_ERRORS.unconfigured };
     res.status(503).json(session); return;
@@ -339,13 +228,8 @@ sessionRouter.get('/session', async (req: Request, res: Response) => {
       const result: AdminSession = { authenticated: false, authorized: false, configured: true, reason: SAFE_ERRORS.unauthenticated };
       res.status(200).json(result); return;
     }
-    if (rows[0].open_id !== auth.claims.openId) {
-      const result: AdminSession = { authenticated: true, authorized: false, configured: true, reason: SAFE_ERRORS.forbidden };
-      res.status(200).json(result); return;
-    }
     const csrfToken = await createCsrfToken(auth, config);
     const result: AdminSession = { authenticated: true, authorized: true, configured: true, name: 'Administrador', csrfToken };
-    res.setHeader('Cache-Control', 'private, no-store');
     res.status(200).json(result);
   } catch {
     const result: AdminSession = { authenticated: false, authorized: false, configured: false, reason: SAFE_ERRORS.unconfigured };

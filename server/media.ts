@@ -20,53 +20,24 @@ function parseMediaId(value: string): number | null {
   const id = Number(value);
   return Number.isSafeInteger(id) ? id : null;
 }
-function runtimeStorageConfig(): { apiUrl: string; apiKey: string } | null {
-  const apiUrl = process.env.MANUS_API_URL?.trim();
-  const apiKey = process.env.MANUS_API_KEY;
-  if (!apiUrl || !apiKey) return null;
-  try { if (new URL(apiUrl).protocol !== 'https:') return null; } catch { return null; }
-  return { apiUrl: apiUrl.replace(/\/+$/, ''), apiKey };
+// Images live in MySQL (cms_media_blobs), so they survive redeploys and need no external storage.
+interface BlobRow extends RowDataPacket { data: Buffer; }
+let blobTableReady: Promise<void> | undefined;
+function ensureBlobTable(): Promise<void> {
+  blobTableReady ??= getDbPool().query(`CREATE TABLE IF NOT EXISTS cms_media_blobs (
+    media_id BIGINT UNSIGNED NOT NULL,
+    data MEDIUMBLOB NOT NULL,
+    PRIMARY KEY (media_id),
+    CONSTRAINT fk_cms_media_blobs_media FOREIGN KEY (media_id) REFERENCES cms_media (id) ON DELETE CASCADE
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`).then(() => undefined).catch(error => { blobTableReady = undefined; throw error; });
+  return blobTableReady;
 }
 
-async function signedStorageUrl(kind: 'put' | 'get', objectKey: string): Promise<string> {
-  const config = runtimeStorageConfig();
-  if (!config) throw new Error('storage_unavailable');
-  const response = await fetch(`${config.apiUrl}/v1/storage/presign/${kind}?path=${encodeURIComponent(objectKey)}`, {
-    headers: { Authorization: `Bearer ${config.apiKey}` },
-    signal: AbortSignal.timeout(15_000),
-  });
-  if (!response.ok) throw new Error('storage_unavailable');
-  const body = await response.json() as { url?: unknown };
-  if (typeof body.url !== 'string') throw new Error('storage_unavailable');
-  try { if (new URL(body.url).protocol !== 'https:') throw new Error('invalid'); } catch { throw new Error('storage_unavailable'); }
-  return body.url;
-}
-
-async function loadObject(objectKey: string): Promise<Buffer> {
-  const url = await signedStorageUrl('get', objectKey);
-  const response = await fetch(url, { signal: AbortSignal.timeout(20_000), redirect: 'error' });
-  if (!response.ok) throw new Error('storage_unavailable');
-  const declaredSize = Number(response.headers.get('content-length'));
-  if (Number.isFinite(declaredSize) && declaredSize > MAX_UPLOAD_BYTES) throw new Error('storage_unavailable');
-  const reader = response.body?.getReader();
-  if (!reader) throw new Error('storage_unavailable');
-  const chunks: Buffer[] = [];
-  let size = 0;
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      size += value.byteLength;
-      if (size > MAX_UPLOAD_BYTES) {
-        await reader.cancel();
-        throw new Error('storage_unavailable');
-      }
-      chunks.push(Buffer.from(value));
-    }
-  } finally {
-    reader.releaseLock();
-  }
-  return Buffer.concat(chunks, size);
+async function loadObject(mediaId: number): Promise<Buffer> {
+  await ensureBlobTable();
+  const [rows] = await getDbPool().execute<BlobRow[]>('SELECT data FROM cms_media_blobs WHERE media_id = ? LIMIT 1', [mediaId]);
+  if (!rows.length) throw new Error('storage_unavailable');
+  return Buffer.from(rows[0].data);
 }
 
 function serveImage(res: Response, row: MediaRow, bytes: Buffer): void {
@@ -104,18 +75,25 @@ adminMediaRouter.post('/uploads', requireAdmin, requireCsrf, (req: Request, res:
         const identity = (req as AdminRequest).adminIdentity;
         if (!identity) { safeError(res, 401, 'Autenticação necessária.', 'unauthorized'); return; }
         const key = `cms/${randomUUID()}.${allowedTypes.get(fileType.mime)}`;
-        const uploadUrl = await signedStorageUrl('put', key);
-        const uploadBody = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
-        const uploaded = await fetch(uploadUrl, {
-          method: 'PUT', headers: { 'Content-Type': fileType.mime }, body: uploadBody,
-          signal: AbortSignal.timeout(30_000), redirect: 'error',
-        });
-        if (!uploaded.ok) { safeError(res, 503, 'Não foi possível armazenar a imagem.', 'storage_unavailable'); return; }
-        const [result] = await getDbPool().execute<ResultSetHeader>(
-          'INSERT INTO cms_media (object_key, mime_type, byte_size, owner_open_id) VALUES (?, ?, ?, ?)',
-          [key, fileType.mime, bytes.length, identity.openId],
-        );
-        const mediaId = Number(result.insertId);
+        await ensureBlobTable();
+        const connection = await getDbPool().getConnection();
+        let mediaIdValue: number;
+        try {
+          await connection.beginTransaction();
+          const [result] = await connection.execute<ResultSetHeader>(
+            'INSERT INTO cms_media (object_key, mime_type, byte_size, owner_open_id) VALUES (?, ?, ?, ?)',
+            [key, fileType.mime, bytes.length, identity.openId],
+          );
+          mediaIdValue = Number(result.insertId);
+          await connection.execute('INSERT INTO cms_media_blobs (media_id, data) VALUES (?, ?)', [mediaIdValue, bytes]);
+          await connection.commit();
+        } catch (error) {
+          try { await connection.rollback(); } catch { /* keep failures generic */ }
+          throw error;
+        } finally {
+          connection.release();
+        }
+        const mediaId = mediaIdValue;
         res.status(201).json({ url: `/api/admin/media/${mediaId}`, mediaId });
       } catch {
         safeError(res, 503, 'O serviço de mídia está temporariamente indisponível.', 'media_unavailable');
@@ -129,10 +107,10 @@ adminMediaRouter.get('/media/:id', requireAdmin, asyncRoute(async (req, res) => 
   const identity = req.adminIdentity;
   if (!id) { safeError(res, 400, 'Identificador de mídia inválido.', 'invalid_id'); return; }
   if (!identity) { safeError(res, 401, 'Autenticação necessária.', 'unauthorized'); return; }
-  const [rows] = await getDbPool().execute<MediaRow[]>('SELECT id, object_key, mime_type, byte_size, owner_open_id FROM cms_media WHERE id = ? AND owner_open_id = ? LIMIT 1', [id, identity.openId]);
+  const [rows] = await getDbPool().execute<MediaRow[]>('SELECT id, object_key, mime_type, byte_size, owner_open_id FROM cms_media WHERE id = ? LIMIT 1', [id]);
   if (!rows.length) { safeError(res, 404, 'Imagem não encontrada.', 'not_found'); return; }
   if (!allowedTypes.has(rows[0].mime_type)) { safeError(res, 404, 'Imagem não encontrada.', 'not_found'); return; }
-  const bytes = await loadObject(rows[0].object_key);
+  const bytes = await loadObject(Number(rows[0].id));
   if (bytes.length !== Number(rows[0].byte_size)) throw new Error('storage_unavailable');
   serveImage(res, rows[0], bytes);
 }));
@@ -151,7 +129,7 @@ publicMediaRouter.get('/media/:id', async (req: Request, res: Response) => {
     );
     if (!rows.length) { safeError(res, 404, 'Imagem não encontrada.', 'not_found'); return; }
     if (!allowedTypes.has(rows[0].mime_type)) { safeError(res, 404, 'Imagem não encontrada.', 'not_found'); return; }
-    const bytes = await loadObject(rows[0].object_key);
+    const bytes = await loadObject(Number(rows[0].id));
     if (bytes.length !== Number(rows[0].byte_size)) throw new Error('storage_unavailable');
     serveImage(res, rows[0], bytes);
   } catch {

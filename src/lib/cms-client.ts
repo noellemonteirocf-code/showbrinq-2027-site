@@ -121,6 +121,14 @@ export function unpublishAdminPost(id: number, revision: number, csrfToken?: str
   });
 }
 
+export function loginAdmin(email: string, password: string): Promise<void> {
+  return request<void>('/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  }, '/api/auth');
+}
+
 export function logoutAdmin(csrfToken?: string): Promise<void> {
   return request<void>('/logout', {
     method: 'POST',

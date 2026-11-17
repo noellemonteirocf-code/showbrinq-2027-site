@@ -46,7 +46,6 @@ const aboutContactSection: Section = {
     { label: 'História da SHOWBRINQ', href: '/blog/historia-showbrinq' },
     { label: 'Contato', href: '/contato' },
     { label: `WhatsApp comercial: ${WHATSAPP_E164}`, href: WHATSAPP_URL },
-    { label: `Telefone: ${WHATSAPP_E164}`, href: `tel:${WHATSAPP_E164}` },
     { label: 'Instagram @showbrinq.oficial', href: INSTAGRAM_URL },
     { label: 'Política de privacidade', href: '/privacidade' },
     { label: 'Termos de uso', href: '/termos' },
@@ -102,13 +101,14 @@ const organization = () => ({
   url: `${publishedOrigin}/`, logo: `${publishedOrigin}/assets/showbrinq-logo-oficial.png`,
   description: publicRouteMetadata['/'].description,
   sameAs: [INSTAGRAM_URL],
-  telephone: WHATSAPP_E164,
-  contactPoint: { '@type': 'ContactPoint', telephone: WHATSAPP_E164, contactType: 'sales', availableLanguage: 'pt-BR', url: WHATSAPP_URL },
+  contactPoint: { '@type': 'ContactPoint', name: 'WhatsApp comercial (MN Eventos)', telephone: WHATSAPP_E164, contactType: 'sales', availableLanguage: 'pt-BR', url: WHATSAPP_URL },
 });
 
 function editionEvent(e: (typeof editions)[number]) {
   return {
-    '@type': 'Event', name: `SHOWBRINQ 2027 — ${e.city}`, url: `${publishedOrigin}/edicoes/${e.id}`,
+    '@type': 'Event', name: `SHOWBRINQ 2027 — ${e.city} - ${e.uf}`, url: `${publishedOrigin}/edicoes/${e.id}`,
+    description: regionalStrategy[e.uf]?.description ?? publicRouteMetadata['/'].description,
+    image: [`${publishedOrigin}/assets/event-photo-01.webp`],
     startDate: isoDate(e.start), endDate: isoDate(e.end, -1),
     eventStatus: 'https://schema.org/EventScheduled', eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     location: { '@type': 'Place', name: `${e.city} (${e.uf})`, address: { '@type': 'PostalAddress', addressLocality: e.city, addressRegion: e.uf, addressCountry: 'BR' } },

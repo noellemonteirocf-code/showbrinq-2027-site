@@ -24,6 +24,7 @@ import {
   getAdminPost,
   getAdminPosts,
   getAdminSession,
+  loginAdmin,
   logoutAdmin,
   publishAdminPost,
   unpublishAdminPost,
@@ -262,17 +263,34 @@ function AccessScreen({
   sessionError: string;
   onRetry: () => void;
 }) {
-  const login = () => {
-    const origin = window.location.origin;
-    window.location.assign(`/api/auth/start?origin=${encodeURIComponent(origin)}`);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginBusy, setLoginBusy] = useState(false);
+  const [loginError, setLoginError] = useState('');
+  const login = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (loginBusy) return;
+    setLoginBusy(true);
+    setLoginError('');
+    try {
+      await loginAdmin(email, password);
+      setPassword('');
+      onRetry();
+    } catch (error) {
+      setLoginError(error instanceof CmsApiError && error.code === 'invalid_credentials'
+        ? 'E-mail ou senha incorretos.'
+        : error instanceof Error ? error.message : 'Não foi possível entrar. Tente novamente.');
+    } finally {
+      setLoginBusy(false);
+    }
   };
   return (
     <main className="sb-access-page">
       <div className="sb-access-card">
         <AdminBrand />
         {state.kind === 'loading' && <div className="sb-access-content" role="status"><span className="sb-spinner" /><h1>Conferindo acesso</h1><p>Estamos verificando sua sessão administrativa.</p></div>}
-        {state.kind === 'setup' && <div className="sb-access-content"><span className="sb-access-icon is-pending"><Clock3 size={24} /></span><h1>Identidade administrativa pendente</h1><p>O acesso ao Painel do Blog ainda não foi configurado. Nenhum usuário de demonstração foi criado; a equipe responsável precisa concluir a configuração de identidade.</p><span className="sb-state-pill">Configuração pendente</span></div>}
-        {state.kind === 'signed-out' && <div className="sb-access-content"><span className="sb-access-icon"><Globe2 size={24} /></span><h1>Painel do Blog</h1><p>Entre com sua conta Manus para verificar suas permissões e acessar os artigos da SHOWBRINQ.</p><button className="sb-button sb-button-primary sb-login-button" type="button" onClick={login}><Globe2 size={18} /> Entrar com minha conta Manus</button></div>}
+        {state.kind === 'setup' && <div className="sb-access-content"><span className="sb-access-icon is-pending"><Clock3 size={24} /></span><h1>Acesso administrativo pendente</h1><p>O acesso ao Painel do Blog ainda não foi configurado. Defina as variáveis BLOG_ADMIN_EMAIL e BLOG_ADMIN_PASSWORD (mínimo de 12 caracteres) na hospedagem e reinicie o site.</p><span className="sb-state-pill">Configuração pendente</span></div>}
+        {state.kind === 'signed-out' && <div className="sb-access-content"><span className="sb-access-icon"><Globe2 size={24} /></span><h1>Painel do Blog</h1><p>Entre com o e-mail e a senha de administração para acessar os artigos da SHOWBRINQ.</p><form className="sb-login-form" onSubmit={login}><label>E-mail<input type="email" autoComplete="username" required value={email} onChange={event => setEmail(event.target.value)} /></label><label>Senha<input type="password" autoComplete="current-password" required value={password} onChange={event => setPassword(event.target.value)} /></label>{loginError && <p className="sb-login-error" role="alert">{loginError}</p>}<button className="sb-button sb-button-primary sb-login-button" type="submit" disabled={loginBusy}><Globe2 size={18} /> {loginBusy ? 'Entrando…' : 'Entrar'}</button></form></div>}
         {state.kind === 'forbidden' && <div className="sb-access-content"><span className="sb-access-icon is-forbidden"><AlertTriangle size={24} /></span><h1>Acesso administrativo não autorizado</h1><p>A sessão foi verificada, mas esta conta não tem permissão para administrar o Blog. Nenhum conteúdo foi aberto ou alterado.</p><span className="sb-state-pill is-forbidden">Acesso restrito</span></div>}
         {state.kind === 'error' && <div className="sb-access-content"><span className="sb-access-icon is-error"><AlertCircle size={24} /></span><h1>Não foi possível verificar a sessão</h1><p role="alert">{sessionError || state.message}</p><button className="sb-button sb-button-secondary" type="button" onClick={onRetry}><RefreshCw size={17} /> Tentar novamente</button></div>}
         <div className="sb-access-footer"><span className="sb-dot" /> Ambiente administrativo protegido</div>
